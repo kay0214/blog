@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.sandman.blog.dao.mysql.user.CarouselDao">
+    <select id="getAllCarousel" resultType="com.sandman.blog.entity.user.Carousel">
+        select * from carousel where delFlag = 0
+    </select>
+</mapper>

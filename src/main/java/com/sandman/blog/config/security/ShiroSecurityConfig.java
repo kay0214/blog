@@ -117,7 +117,7 @@ public class ShiroSecurityConfig {
         filterChainDefinitionMap.put("/api/sandman/v1/validateCode/sendValidateCode","anon");//注册用户时发送邮件验证码接口，匿名用户可访问
         filterChainDefinitionMap.put("/api/sandman/v1/user/contactExist","anon");//验证联系方式是否已经被绑定接口，匿名用户可访问
         filterChainDefinitionMap.put("/api/sandman/v1/uploadRecord/getAllRecords","authc");
-        filterChainDefinitionMap.put("/**", "authc");
+        filterChainDefinitionMap.put("/**", "anon");
 
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
         return shiroFilterFactoryBean;

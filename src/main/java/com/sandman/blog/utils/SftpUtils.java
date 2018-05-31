@@ -20,7 +20,7 @@ public class SftpUtils {
     /**
      * 文件路径前缀. /var/www/html/spkIMG
      */
-    private static final String PRE_FIX = "/var/www/html/spkIMG";
+    private static final String PRE_FIX = "/var/www/html/sandman/blog";
 
     /**
      * sftp连接池.

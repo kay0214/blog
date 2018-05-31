@@ -1,5 +1,7 @@
 package com.sandman.blog.utils;
 
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 /**
@@ -17,5 +19,8 @@ public class RandomUtils {
     public static String getUuidStr(){
         String uuid = UUID.randomUUID().toString().toUpperCase();
         return uuid.replace("-", "");
+    }
+    public static String getRandomFileName(){
+        return ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + getUuidStr();
     }
 }

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.sandman.blog.dao.mysql.user.BlogDao">
+    <sql id="blog">
+        t.id as id,
+        t.bloggerId as bloggerId,
+        t.title as title,
+        t.summary as summary,
+        t.content as content,
+        t.contentNoTag as contentNoTag,
+        t.clickCount as clickCount,
+        t.replayCount as replayCount,
+        t.isTop as isTop,
+        t.isDraft as isDraft,
+        t.blogType as blogType,
+        t.onlyMeRead as onlyMeRead,
+        t.categoryId as categoryId,
+        t.categoryName as categoryName,
+        t.keyWord as keyWord,
+        t.createBy as createBy,
+        t.createTime as createTime,
+        t.updateBy as updateBy,
+        t.updateTime as updateTime,
+        t.delFlag as delFlag,
+        r.id as r_id,
+        r.userName as r_userName,
+        r.nickName as r_nickName,
+        r.sign as r_sign,
+        r.proFile as r_proFile,
+        r.imageUrl as r_imageUrl,
+        r.createBy as r_createBy,
+        r.createTime as r_createTime,
+        r.updateBy as r_updateBy,
+        r.updateTime as r_updateTime,
+        r.delFlag as r_delFlag
+    </sql>
+    <resultMap id="blogResultMap" type="com.sandman.blog.entity.user.Blog">
+        <id property="id" column="id"/>
+        <result property="bloggerId" column="bloggerId"/>
+        <result property="title" column="title"/>
+        <result property="summary" column="summary"/>
+        <result property="content" column="content"/>
+        <result property="contentNoTag" column="contentNoTag"/>
+        <result property="clickCount" column="clickCount"/>
+        <result property="replayCount" column="replayCount"/>
+        <result property="isTop" column="isTop"/>
+        <result property="isDraft" column="isDraft"/>
+        <result property="blogType" column="blogType"/>
+        <result property="onlyMeRead" column="onlyMeRead"/>
+        <result property="categoryId" column="categoryId"/>
+        <result property="categoryName" column="categoryName"/>
+        <result property="keyWord" column="keyWord"/>
+        <result property="createBy" column="createBy"/>
+        <result property="createTime" column="createTime"/>
+        <result property="updateBy" column="updateBy"/>
+        <result property="updateTime" column="updateTime"/>
+        <result property="delFlag" column="delFlag"/>
+        <association property="blogger" javaType="com.sandman.blog.entity.user.Blogger">
+            <id property="id" column="r_id"/>
+            <result property="userName" column="r_userName"/>
+            <result property="nickName" column="r_nickName"/>
+            <result property="sign" column="r_sign"/>
+            <result property="proFile" column="r_proFile"/>
+            <result property="imageUrl" column="r_imageUrl"/>
+            <result property="createBy" column="r_createBy"/>
+            <result property="createTime" column="r_createTime"/>
+            <result property="updateBy" column="r_updateBy"/>
+            <result property="updateTime" column="r_updateTime"/>
+            <result property="delFlag" column="r_delFlag"/>
+
+        </association>
+    </resultMap>
+    <select id="getBlogById" parameterType="Long" resultMap="blogResultMap">
+      select <include refid="blog"/> from blog t,blogger r where t.delFlag=0 and t.bloggerId = r.id and t.id = #{id}
+    </select>
+    <select id="getAllBlog" parameterType="com.sandman.blog.entity.common.SortParam" resultMap="blogResultMap">
+        select <include refid="blog"/> from blog t,blogger r where t.delFlag=0
+        <if test="cause!=null and cause!=''">
+            and (t.title like CONCAT('%',#{cause},'%') or t.contentNoTag like CONCAT('%',#{cause},'%'))
+        </if>
+        <choose>
+            <when test="order!=null">
+                order by #{order}
+            </when>
+            <otherwise>
+                order by t.createBy
+            </otherwise>
+        </choose>
+        <choose>
+            <when test="sortType!=null">
+                #{sortType}
+            </when>
+            <otherwise>
+                desc
+            </otherwise>
+        </choose>
+        <if test="pageNumber!=null and size!=null">
+            limit #{startRow},#{size}
+        </if>
+    </select>
+</mapper>

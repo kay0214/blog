@@ -68,4 +68,7 @@ public class SftpParam {
     public static String getTempFilePath() {
         return TEMP_FILE_PATH;
     }
+    public static String getLinePathPrefix(){
+        return "http://" + getHOST();
+    }
 }

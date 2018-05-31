@@ -3,6 +3,8 @@ server:
 logging:
   level:
     root: info
+    com.sandman.blog.dao.mysql: DEBUG
+
 #39.104.80.30
 spring:
   #数据库配置
@@ -10,7 +12,7 @@ spring:
     mysql:
       #用户数据库配置，存放用户数据
       user:
-        jdbcUrl: jdbc:mysql://39.104.80.30:3306/sandman?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&useSSL
+        jdbcUrl: jdbc:mysql://39.104.80.30:3306/blog?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&useSSL=false
         username: sunpeikai
         password: spkzq521
         driver-class-name: com.mysql.jdbc.Driver
@@ -31,7 +33,7 @@ sftpServer:
   password: abcd54321
   host: 39.104.80.30
   sshPort: 22
-  prefix: /var/www/html/spkIMG
+  prefix: /var/www/html
   tempFilePath: C:\\Test #/home/sandman #MultiPartFile转File时，临时文件存放路径
 
 elasticsearch:

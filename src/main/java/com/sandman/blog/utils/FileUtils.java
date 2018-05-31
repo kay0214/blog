@@ -3,6 +3,7 @@ package com.sandman.blog.utils;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.SftpException;
 import com.sandman.blog.entity.common.SftpParam;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
@@ -23,7 +24,6 @@ public class FileUtils {
         fileSizeMap.put(2, "MB");
         fileSizeMap.put(3, "GB");
     }
-
     public static boolean uploadFile(byte[] file, String filePath, String fileName) {
         File targetFile = new File(filePath);
         if (!targetFile.exists()) {
@@ -144,7 +144,35 @@ public class FileUtils {
         }
         return true;
     }
+    /**
+     * 异步上传图片
+     * */
+    public static void uploadAsync(String filePath, String fileName, File file){
+        ChannelSftp sftp = SftpPool.getSftp();//从连接池获取一个连接
+        mkDirectory(filePath);
+        System.out.println("FileUtils.upload:::filePath=" + filePath + ";fileName=" + fileName);
+        try {
+            sftp.cd(filePath);//cd 到上传路径
+            fileName = (fileName == null || "".equals(fileName)) ? file.getName() : fileName;//fileName如果为空，就取file的原名
+            OutputStream outstream = sftp.put(fileName);//设置上传文件的名字
+            InputStream instream = new FileInputStream(file);//设置上传文件
+            byte b[] = new byte[1024];
+            int n;
+            while ((n = instream.read(b)) != -1) {
+                outstream.write(b, 0, n);
+            }
 
+            outstream.flush();
+            outstream.close();
+            instream.close();
+
+            SftpPool.returnSftp(sftp);//将一个连接归还连接池
+        } catch (IOException e1) {
+            System.out.println(e1);
+        } catch (SftpException e2) {
+            System.out.println(e2);
+        }
+    }
     /**
      * 通过sftp方式从服务器下载文件
      * @Param filePath 服务器文件路径
