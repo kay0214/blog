@@ -8,6 +8,7 @@ import com.sandman.blog.entity.common.SftpParam;
 import com.sandman.blog.entity.common.SortParam;
 import com.sandman.blog.entity.user.Blog;
 import com.sandman.blog.utils.FileUtils;
+import com.sandman.blog.utils.PageBean;
 import com.sandman.blog.utils.RandomUtils;
 import com.sandman.blog.utils.SftpUtils;
 import org.slf4j.Logger;
@@ -19,7 +20,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class BlogService {
@@ -49,6 +52,33 @@ public class BlogService {
         }
         log.info(blogList.toString());
         return new BaseDto(ResponseStatus.SUCCESS,blogList);
+    }
+    public BaseDto findByBloggerId(Integer pageNumber, Integer size,String sortType,String order,Long bloggerId){
+        log.info("pageNumber======={},size========{},bloggerId========{}",pageNumber,size,bloggerId);
+        pageNumber = (pageNumber==null || pageNumber<1)?1:pageNumber;
+        size = (size==null || size<0)?10:size;
+        sortType = (sortType==null || "".equals(sortType))?"desc":sortType;
+        order = (order==null || "".equals(order))?"createTime":order;
+        String orderBy = order + " " + sortType;//默认按照id降序排序
+
+        Integer totalRow = blogDao.findByBloggerId(bloggerId).size();//查询出数据条数
+        log.info("totalRow:::::{}",totalRow);
+        PageHelper.startPage(pageNumber,size).setOrderBy(orderBy);
+
+        List<Blog> blogList = blogDao.findByBloggerId(bloggerId);//查询出列表（已经分页）
+
+        PageBean<Blog> pageBean = new PageBean<>(pageNumber,size,totalRow);//这里是为了计算页数，页码
+
+        pageBean.setItems(blogList);
+        List<Blog> result = pageBean.getItems();
+
+        Map data = new HashMap();//最终返回的map
+
+        data.put("totalRow",totalRow);
+        data.put("totalPage",pageBean.getTotalPage());
+        data.put("currentPage",pageBean.getCurrentPage());//默认0就是第一页
+        data.put("blogList",result);
+        return new BaseDto(ResponseStatus.SUCCESS,data);
     }
     public List uploadContentImg(MultipartFile[] files){
         List<String> imgUrl = new ArrayList<>();

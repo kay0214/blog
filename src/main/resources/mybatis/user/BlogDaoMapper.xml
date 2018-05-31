@@ -98,4 +98,7 @@
             limit #{startRow},#{size}
         </if>
     </select>
+    <select id="findByBloggerId" parameterType="Long" resultMap="blogResultMap">
+        select <include refid="blog"/> from blog t,blogger r where t.delFlag=0 and bloggerId = #{bloggerId}
+    </select>
 </mapper>

@@ -44,6 +44,11 @@ public class BlogController {
     public BaseDto findByKeyWord(Integer pageNumber, Integer size,String keyWord){
         return blogService.findByKeyWord(pageNumber, size, keyWord);
     }
+    @ApiOperation(value = "查询某位博主的所有博客")
+    @GetMapping("/blog/findByBloggerId")
+    public BaseDto findByBloggerId(Integer pageNumber, Integer size,String sortType,String order,Long bloggerId){
+        return blogService.findByBloggerId(pageNumber, size, sortType, order, bloggerId);
+    }
     @ApiOperation(value = "保存博客")
     @PostMapping("/blog/createBlog")
     public BaseDto createBlog(){
