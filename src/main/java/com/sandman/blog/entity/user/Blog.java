@@ -13,6 +13,7 @@ public class Blog {
     private Integer replayCount;//评论次数
     private Integer isTop;//是否置顶，1置顶；0不置顶（每个用户只能有一个置顶博客）
     private Integer isDraft;//是否是草稿，1草稿；0正式发布文章
+    private Integer isForbiddenComment;//是否禁止评论。0 不禁止；1 禁止
     private Integer blogType;//博客类型,0原创博客；1转载博客
     private Integer onlyMeRead;//私密文章
     private Long categoryId;//用户自定义分类id，可为空
@@ -103,6 +104,14 @@ public class Blog {
 
     public void setIsDraft(Integer isDraft) {
         this.isDraft = isDraft;
+    }
+
+    public Integer getIsForbiddenComment() {
+        return isForbiddenComment;
+    }
+
+    public void setIsForbiddenComment(Integer isForbiddenComment) {
+        this.isForbiddenComment = isForbiddenComment;
     }
 
     public Integer getBlogType() {
@@ -206,6 +215,7 @@ public class Blog {
                 ", replayCount=" + replayCount +
                 ", isTop=" + isTop +
                 ", isDraft=" + isDraft +
+                ", isForbiddenComment=" + isForbiddenComment +
                 ", blogType=" + blogType +
                 ", onlyMeRead=" + onlyMeRead +
                 ", categoryId=" + categoryId +

@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.sandman.blog.entity.common.BaseDto;
 import com.sandman.blog.entity.common.ResponseStatus;
 import com.sandman.blog.service.user.BlogService;
+import com.sandman.blog.utils.ShiroSecurityUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
@@ -47,7 +48,26 @@ public class BlogController {
     @ApiOperation(value = "查询某位博主的所有博客")
     @GetMapping("/blog/findByBloggerId")
     public BaseDto findByBloggerId(Integer pageNumber, Integer size,String sortType,String order,Long bloggerId){
+        bloggerId = (bloggerId == null)?ShiroSecurityUtils.getCurrentUserId():bloggerId;
         return blogService.findByBloggerId(pageNumber, size, sortType, order, bloggerId);
+    }
+    @ApiOperation(value = "根据id删除博客（假删）")
+    @GetMapping("/blog/deleteBlog")
+    public BaseDto deleteBlog(Long id){
+        Long bloggerId = ShiroSecurityUtils.getCurrentUserId();
+        if(bloggerId!=null){
+            return blogService.deleteBlog(id,bloggerId);
+        }
+        return new BaseDto(ResponseStatus.NOT_HAVE_PERMISSION_TO_DELETE);
+    }
+    @ApiOperation(value = "将博客设置为禁止评论状态")
+    @GetMapping("/blog/forbiddenComment")
+    public BaseDto forbiddenComment(Long id){
+        Long bloggerId = ShiroSecurityUtils.getCurrentUserId();
+        if(bloggerId!=null){
+            return blogService.forbiddenComment(id,bloggerId);
+        }
+        return new BaseDto(ResponseStatus.NOT_HAVE_PERMISSION_TO_UPDATE);
     }
     @ApiOperation(value = "保存博客")
     @PostMapping("/blog/createBlog")

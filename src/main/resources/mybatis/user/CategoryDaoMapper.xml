@@ -4,4 +4,10 @@
     <select id="getCategoryById" parameterType="Long" resultType="com.sandman.blog.entity.user.Category">
         select * from category where delFlag = 0 and id = #{id}
     </select>
+    <select id="getCategoryListByBloggerId" parameterType="Long" resultType="com.sandman.blog.entity.user.Category">
+        select * from category where delFlag = 0 and bloggerId = #{bloggerId} order by orderNo
+    </select>
+    <insert id="createCategory" parameterType="com.sandman.blog.entity.user.Category">
+        insert into category values(null,#{bloggerId},#{categoryName},#{blogCount},#{orderNo},null,#{createTime},null,#{updateTime},#{delFlag})
+    </insert>
 </mapper>

@@ -12,6 +12,7 @@
         t.replayCount as replayCount,
         t.isTop as isTop,
         t.isDraft as isDraft,
+        t.isForbiddenComment as isForbiddenComment,
         t.blogType as blogType,
         t.onlyMeRead as onlyMeRead,
         t.categoryId as categoryId,
@@ -45,6 +46,7 @@
         <result property="replayCount" column="replayCount"/>
         <result property="isTop" column="isTop"/>
         <result property="isDraft" column="isDraft"/>
+        <result property="isForbiddenComment" column="isForbiddenComment"/>
         <result property="blogType" column="blogType"/>
         <result property="onlyMeRead" column="onlyMeRead"/>
         <result property="categoryId" column="categoryId"/>
@@ -101,4 +103,53 @@
     <select id="findByBloggerId" parameterType="Long" resultMap="blogResultMap">
         select <include refid="blog"/> from blog t,blogger r where t.delFlag=0 and bloggerId = #{bloggerId}
     </select>
+    <update id="updateBlog" parameterType="com.sandman.blog.entity.user.Blog">
+        update blog set updateTime=#{updateTime}
+        <if test="title !=null and title!=''">
+            ,title=#{title}
+        </if>
+        <if test="summary !=null and summary!=''">
+            ,summary=#{summary}
+        </if>
+        <if test="content!=null and content!=''">
+            ,content=#{content}
+        </if>
+        <if test="contentNoTag !=null and contentNoTag!=''">
+            ,contentNoTag=#{contentNoTag}
+        </if>
+        <if test="clickCount !=null and clickCount!=''">
+            ,clickCount=#{clickCount}
+        </if>
+        <if test="replayCount !=null and replayCount!=''">
+            ,replayCount=#{replayCount}
+        </if>
+        <if test="isTop !=null">
+            ,isTop=#{isTop}
+        </if>
+        <if test="isDraft !=null">
+            ,isDraft=#{isDraft}
+        </if>
+        <if test="isForbiddenComment !=null">
+            ,isForbiddenComment=#{isForbiddenComment}
+        </if>
+        <if test="blogType !=null and blogType!=''">
+            ,blogType=#{blogType}
+        </if>
+        <if test="onlyMeRead !=null and onlyMeRead!=''">
+            ,onlyMeRead=#{onlyMeRead}
+        </if>
+        <if test="categoryId !=null and categoryId!=''">
+            ,categoryId=#{categoryId}
+        </if>
+        <if test="categoryName !=null and categoryName!=''">
+            ,categoryName=#{categoryName}
+        </if>
+        <if test="keyWord !=null and keyWord!=''">
+            ,keyWord=#{keyWord}
+        </if>
+        <if test="delFlag !=null and delFlag!=''">
+            ,delFlag=#{delFlag}
+        </if>
+        where id=#{id}
+    </update>
 </mapper>

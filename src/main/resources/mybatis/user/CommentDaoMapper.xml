@@ -1,5 +1,61 @@
 <?xml version="1.0" encoding="UTF-8" ?>  
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
 <mapper namespace="com.sandman.blog.dao.mysql.user.CommentDao">
+    <sql id="comment">
+        t.id as id,
+        t.bloggerId as bloggerId,
+        t.content as content,
+        t.blogId as blogId,
+        t.status as status,
+        t.createBy as createBy,
+        t.createTime as createTime,
+        t.updateBy as updateBy,
+        t.updateTime as updateTime,
+        t.delFlag as delFlag,
+        blogger.id as blogger_id,
+        blogger.userName as blogger_userName,
+        blogger.nickName as blogger_nickName,
 
+        blog.id as blog_id,
+        blog.bloggerId as blog_bloggerId,
+        blog.title as blog_title
+
+    </sql>
+    <resultMap id="commentResultMap" type="com.sandman.blog.entity.user.Comment">
+        <id property="id" column="id"/>
+        <result property="bloggerId" column="bloggerId"/>
+        <result property="content" column="content"/>
+        <result property="blogId" column="blogId"/>
+        <result property="status" column="status"/>
+        <result property="createBy" column="createBy"/>
+        <result property="createTime" column="createTime"/>
+        <result property="updateBy" column="updateBy"/>
+        <result property="updateTime" column="updateTime"/>
+        <result property="delFlag" column="delFlag"/>
+        <association property="blogger" javaType="com.sandman.blog.entity.user.Blogger">
+            <id property="id" column="blogger_id"/>
+            <result property="userName" column="blogger_userName"/>
+            <result property="nickName" column="blogger_nickName"/>
+        </association>
+        <association property="blog" javaType="com.sandman.blog.entity.user.Blog">
+            <id property="id" column="blog_id"/>
+            <result property="bloggerId" column="blog_bloggerId"/>
+            <result property="title" column="blog_title"/>
+        </association>
+    </resultMap>
+    <select id="getMyComment" parameterType="Long" resultMap="commentResultMap">
+        select <include refid="comment"/> from blog_comment t,blogger blogger,blog blog where t.delFlag=0
+        and t.bloggerId = blogger.id and t.blogId = blog.id and t.bloggerId = #{bloggerId}
+    </select>
+    <select id="getCommentMe" parameterType="Long" resultMap="commentResultMap">
+        select <include refid="comment"/> from blog_comment t,blogger blogger,blog blog where t.delFlag=0
+        and t.bloggerId = blogger.id and t.blogId = blog.id and blog.bloggerId = #{bloggerId}
+    </select>
+    <select id="findById" parameterType="Long" resultMap="commentResultMap">
+        select <include refid="comment"/> from blog_comment t,blogger blogger,blog blog where t.delFlag=0
+        and t.bloggerId = blogger.id and t.blogId = blog.id and t.id = #{id}
+    </select>
+    <update id="deleteComment" parameterType="Long">
+        update blog_comment set delFlag = 1 where id = #{id}
+    </update>
 </mapper>

@@ -22,7 +22,7 @@ import java.util.Map;
  * Created by sunpeikai on 2018/5/4.
  */
 @RestController
-@RequestMapping("/api/sandman/v1/user")
+@RequestMapping("/api/blog/v1/user")
 public class UserController {
     private final Logger log = LoggerFactory.getLogger(getClass());
     @Autowired
@@ -49,8 +49,10 @@ public class UserController {
         Subject currentSubject = ShiroSecurityUtils.getCurrentSubject();
         log.info("user[{}] has permission[getCurUserInfo]:::{}",ShiroSecurityUtils.getCurrentUserName(),isPermitted);
         log.info("has role[USER]:::{};has role[ADMIN]::::{}",currentSubject.hasRole("USER"),currentSubject.hasRole("ADMIN"));
-        User user = userService.getCurUserInfo();
+        //User user = userService.getCurUserInfo();
+        User user = ShiroSecurityUtils.getCurrentUser();
         if(user!=null){
+            log.info("userinfo====================={}",user);
             return new BaseDto(200,"查询成功!",user);
         }
         return new BaseDto(419,"用户未登录!");

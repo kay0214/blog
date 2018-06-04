@@ -80,6 +80,30 @@ public class BlogService {
         data.put("blogList",result);
         return new BaseDto(ResponseStatus.SUCCESS,data);
     }
+    public BaseDto deleteBlog(Long id,Long bloggerId){
+        log.info("delete blog ======== blogId::::{},bloggerId::::{}",id,bloggerId);
+        Blog blog = blogDao.getBlogById(id);
+        if(bloggerId.equals(blog.getBloggerId())){
+            blog.setDelFlag(1);
+            blogDao.updateBlog(blog);
+            return new BaseDto(ResponseStatus.SUCCESS);
+        }
+        return new BaseDto(ResponseStatus.NOT_HAVE_PERMISSION_TO_DELETE);
+    }
+    public BaseDto forbiddenComment(Long id,Long bloggerId){
+        Blog blog = blogDao.getBlogById(id);
+        if(bloggerId.equals(blog.getBloggerId())){
+            if(blog.getIsForbiddenComment()==1){
+                blog.setIsForbiddenComment(0);
+            }else{
+                blog.setIsForbiddenComment(1);
+            }
+            log.info("禁止评论标记::::::::{}",blog.getIsForbiddenComment());
+            blogDao.updateBlog(blog);
+            return new BaseDto(ResponseStatus.SUCCESS);
+        }
+        return new BaseDto(ResponseStatus.NOT_HAVE_PERMISSION_TO_DELETE);
+    }
     public List uploadContentImg(MultipartFile[] files){
         List<String> imgUrl = new ArrayList<>();
         for(MultipartFile file:files){

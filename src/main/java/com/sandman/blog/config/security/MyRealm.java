@@ -5,10 +5,12 @@ import com.sandman.blog.entity.system.Role;
 import com.sandman.blog.entity.system.User;
 import com.sandman.blog.service.system.UserService;
 import com.sandman.blog.utils.PasswordEncrypt;
+import com.sandman.blog.utils.ShiroSecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
+import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +42,11 @@ public class MyRealm extends AuthorizingRealm{
 		if(user.getAvailable()==0)
 			throw new LockedAccountException("账户被锁定");
 		if(user != null){
+			Session session = ShiroSecurityUtils.getSession();
+			session.setAttribute("user",user);
+			session.setAttribute("id",user.getId());
+			session.setAttribute("userName",user.getUserName());
+			session.setAttribute("nickName",user.getNickName());
 			// 这里我设置的principal传的是user实体
 			SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(user,
 					password,
