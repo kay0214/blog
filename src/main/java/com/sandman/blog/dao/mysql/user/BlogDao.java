@@ -15,4 +15,5 @@ public interface BlogDao {
     public List<Blog> getAllBlog(SortParam sortParam);
     public List<Blog> findByBloggerId(Long bloggerId);
     public void updateBlog(Blog blog);
+    public void createBlog(Blog blog);
 }

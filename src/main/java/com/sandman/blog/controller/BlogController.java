@@ -3,6 +3,7 @@ package com.sandman.blog.controller;
 import com.alibaba.fastjson.JSON;
 import com.sandman.blog.entity.common.BaseDto;
 import com.sandman.blog.entity.common.ResponseStatus;
+import com.sandman.blog.entity.user.Blog;
 import com.sandman.blog.service.user.BlogService;
 import com.sandman.blog.utils.ShiroSecurityUtils;
 import io.swagger.annotations.Api;
@@ -70,9 +71,15 @@ public class BlogController {
         return new BaseDto(ResponseStatus.NOT_HAVE_PERMISSION_TO_UPDATE);
     }
     @ApiOperation(value = "保存博客")
-    @PostMapping("/blog/createBlog")
-    public BaseDto createBlog(){
-        return null;
+    @PostMapping("/blog/saveBlog")
+    public BaseDto saveBlog(Blog blog){
+        Long bloggerId = ShiroSecurityUtils.getCurrentUserId();
+        blog.setBloggerId(bloggerId);
+        log.info(blog.toString());
+        if(bloggerId!=null){
+            return blogService.saveBlog(blog);
+        }
+        return new BaseDto(ResponseStatus.NOT_HAVE_PERMISSION_TO_UPDATE);
     }
     @ApiOperation(value = "上传图片到服务器")
     @PostMapping("/blog/uploadContentImg")

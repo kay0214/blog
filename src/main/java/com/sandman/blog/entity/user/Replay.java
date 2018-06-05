@@ -1,18 +1,13 @@
 package com.sandman.blog.entity.user;
 
-import org.w3c.dom.stylesheets.LinkStyle;
-
 import java.time.ZonedDateTime;
-import java.util.List;
 
-public class Comment {
+public class Replay {
     private Long id;
     private Long bloggerId;
-    private Blogger blogger;//评论人详细信息
+    private Blogger blogger;//回复人详细信息
     private String content;//评论内容
-    private Long blogId;
-    private Blog blog;//本篇博客
-    private Integer status;//审核状态 0 待审核 1 审核通过 2 审核未通过
+    private Long commentId;//回复的评论id
     private Long createBy;
     private ZonedDateTime createTime;
     private Long updateBy;
@@ -51,28 +46,12 @@ public class Comment {
         this.content = content;
     }
 
-    public Long getBlogId() {
-        return blogId;
+    public Long getCommentId() {
+        return commentId;
     }
 
-    public void setBlogId(Long blogId) {
-        this.blogId = blogId;
-    }
-
-    public Blog getBlog() {
-        return blog;
-    }
-
-    public void setBlog(Blog blog) {
-        this.blog = blog;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
+    public void setCommentId(Long commentId) {
+        this.commentId = commentId;
     }
 
     public Long getCreateBy() {
@@ -117,14 +96,12 @@ public class Comment {
 
     @Override
     public String toString() {
-        return "Comment{" +
+        return "Replay{" +
                 "id=" + id +
                 ", bloggerId=" + bloggerId +
                 ", blogger=" + blogger +
                 ", content='" + content + '\'' +
-                ", blogId=" + blogId +
-                ", blog=" + blog +
-                ", status=" + status +
+                ", commentId=" + commentId +
                 ", createBy=" + createBy +
                 ", createTime=" + createTime +
                 ", updateBy=" + updateBy +

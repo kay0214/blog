@@ -2,15 +2,16 @@ package com.sandman.blog.service.user;
 
 import com.github.pagehelper.PageHelper;
 import com.sandman.blog.dao.mysql.user.BlogDao;
+import com.sandman.blog.dao.mysql.user.CategoryDao;
+import com.sandman.blog.dao.mysql.user.CommentDao;
 import com.sandman.blog.entity.common.BaseDto;
 import com.sandman.blog.entity.common.ResponseStatus;
 import com.sandman.blog.entity.common.SftpParam;
 import com.sandman.blog.entity.common.SortParam;
 import com.sandman.blog.entity.user.Blog;
-import com.sandman.blog.utils.FileUtils;
-import com.sandman.blog.utils.PageBean;
-import com.sandman.blog.utils.RandomUtils;
-import com.sandman.blog.utils.SftpUtils;
+import com.sandman.blog.entity.user.Category;
+import com.sandman.blog.entity.user.Comment;
+import com.sandman.blog.utils.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,8 +31,20 @@ public class BlogService {
     private final Logger log = LoggerFactory.getLogger(getClass());
     @Autowired
     private BlogDao blogDao;
+    @Autowired
+    private CategoryDao categoryDao;
+    @Autowired
+    private CommentService commentService;
+
     public BaseDto getBlogById(Long id){
+        Long bloggerId = ShiroSecurityUtils.getCurrentUserId();
         Blog blog = blogDao.getBlogById(id);
+        //List<Comment> commentList = commentService.getCommentByBlogId(blog.getId());
+        //blog.setCommentList(commentList);
+        if(bloggerId != null && !bloggerId.equals(blog.getBloggerId())){//登录用户且不是自己点击的，才算阅读量+1
+            blog.setClickCount(blog.getClickCount() + 1);//阅读数+1
+            blogDao.updateBlog(blog);
+        }
         return new BaseDto(ResponseStatus.SUCCESS,blog);
     }
     public BaseDto getAllBlog(Integer pageNumber, Integer size){
@@ -103,6 +117,55 @@ public class BlogService {
             return new BaseDto(ResponseStatus.SUCCESS);
         }
         return new BaseDto(ResponseStatus.NOT_HAVE_PERMISSION_TO_DELETE);
+    }
+    public BaseDto saveBlog(Blog blog){
+        Category category = categoryDao.getCategoryById(blog.getCategoryId());//根据用户自定义类型id查询自定义类型
+        if(blog.getId() != null){ //id不为空就是修改
+            Blog savedBlog = blogDao.getBlogById(blog.getId());
+            if(savedBlog!=null){//能查询出来博客
+                if(!blog.getBloggerId().equals(savedBlog.getBloggerId())){//如果修改人不是博主本人，返回无权修改
+                    return new BaseDto(ResponseStatus.NOT_HAVE_PERMISSION_TO_UPDATE);
+                }
+                savedBlog.setTitle(blog.getTitle());//更新标题
+                if(blog.getContentNoTag().length()>100){
+                    savedBlog.setSummary(blog.getContentNoTag().substring(0,100));//更新摘要，截取0-100的不带tag的内容
+                }else{
+                    savedBlog.setSummary(blog.getContentNoTag());//更新摘要，截取0-100的不带tag的内容
+                }
+
+                savedBlog.setContent(blog.getContent());//更新带tag的内容
+                savedBlog.setContentNoTag(blog.getContentNoTag());//更新不带tag的内容
+                savedBlog.setIsDraft(blog.getIsDraft());//更新是否草稿
+                savedBlog.setBlogType(blog.getBlogType());//更新博客类型，原创or转载
+                savedBlog.setOnlyMeRead(blog.getOnlyMeRead());//更新博客私密性
+                savedBlog.setCategoryId(blog.getCategoryId());//更新博客的用户自定义类型id
+                savedBlog.setCategoryName(category.getCategoryName());//更新用户自定义类型名
+                savedBlog.setKeyWord(blog.getKeyWord().trim());//更新博客关键词
+                savedBlog.setUpdateBy(blog.getBloggerId());
+                savedBlog.setUpdateTime(ZonedDateTime.now());
+                blogDao.updateBlog(savedBlog);//更新到数据库
+                return new BaseDto(ResponseStatus.SUCCESS);
+            }
+            return new BaseDto(ResponseStatus.HAVE_NO_DATA);
+        }else{//id为空就是新增
+            if(blog.getContentNoTag().length()>100){
+                blog.setSummary(blog.getContentNoTag().substring(0,100));//设置摘要，截取0-100的不带tag的内容
+            }else{
+                blog.setSummary(blog.getContentNoTag());//设置摘要，截取0-100的不带tag的内容
+            }
+            blog.setClickCount(0);
+            blog.setReplayCount(0);
+            blog.setIsTop(0);
+            blog.setIsForbiddenComment(0);
+            blog.setCategoryName(category.getCategoryName());
+            blog.setCreateBy(blog.getBloggerId());
+            blog.setCreateTime(ZonedDateTime.now());
+            blog.setUpdateBy(blog.getBloggerId());
+            blog.setUpdateTime(ZonedDateTime.now());
+            blog.setDelFlag(0);
+            blogDao.createBlog(blog);//创建到数据库
+            return new BaseDto(ResponseStatus.SUCCESS);
+        }
     }
     public List uploadContentImg(MultipartFile[] files){
         List<String> imgUrl = new ArrayList<>();

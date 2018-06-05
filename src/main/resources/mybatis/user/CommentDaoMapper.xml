@@ -19,7 +19,12 @@
         blog.id as blog_id,
         blog.bloggerId as blog_bloggerId,
         blog.title as blog_title
-
+/*
+        replay.id as replay_id,
+        replay.bloggerId as replay_bloggerId,
+        replay.content as replay_content,
+        replay.commentId as replay_commentId,
+        replay.createTime as replay_createTime*/
     </sql>
     <resultMap id="commentResultMap" type="com.sandman.blog.entity.user.Comment">
         <id property="id" column="id"/>
@@ -42,6 +47,7 @@
             <result property="bloggerId" column="blog_bloggerId"/>
             <result property="title" column="blog_title"/>
         </association>
+
     </resultMap>
     <select id="getMyComment" parameterType="Long" resultMap="commentResultMap">
         select <include refid="comment"/> from blog_comment t,blogger blogger,blog blog where t.delFlag=0
@@ -58,4 +64,8 @@
     <update id="deleteComment" parameterType="Long">
         update blog_comment set delFlag = 1 where id = #{id}
     </update>
+<!--    <select id="getCommentByBlogId" parameterType="Long" resultMap="commentResultMap">
+        select <include refid="comment"/> from blog_comment t,blogger blogger,blog blog  where t.delFlag=0
+        and t.bloggerId = blogger.id and t.blogId = blog.id and t.blogId = #{blogId}
+    </select>-->
 </mapper>

@@ -30,6 +30,8 @@ public class CommentService {
             return new BaseDto(ResponseStatus.SUCCESS);
         }
         return new BaseDto(ResponseStatus.NOT_HAVE_PERMISSION_TO_DELETE);
-
     }
+/*    public List<Comment> getCommentByBlogId(Long blogId){
+        return commentDao.getCommentByBlogId(blogId);
+    }*/
 }

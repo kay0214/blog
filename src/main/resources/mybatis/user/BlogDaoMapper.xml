@@ -117,10 +117,10 @@
         <if test="contentNoTag !=null and contentNoTag!=''">
             ,contentNoTag=#{contentNoTag}
         </if>
-        <if test="clickCount !=null and clickCount!=''">
+        <if test="clickCount !=null">
             ,clickCount=#{clickCount}
         </if>
-        <if test="replayCount !=null and replayCount!=''">
+        <if test="replayCount !=null">
             ,replayCount=#{replayCount}
         </if>
         <if test="isTop !=null">
@@ -132,13 +132,13 @@
         <if test="isForbiddenComment !=null">
             ,isForbiddenComment=#{isForbiddenComment}
         </if>
-        <if test="blogType !=null and blogType!=''">
+        <if test="blogType !=null">
             ,blogType=#{blogType}
         </if>
-        <if test="onlyMeRead !=null and onlyMeRead!=''">
+        <if test="onlyMeRead !=null">
             ,onlyMeRead=#{onlyMeRead}
         </if>
-        <if test="categoryId !=null and categoryId!=''">
+        <if test="categoryId !=null">
             ,categoryId=#{categoryId}
         </if>
         <if test="categoryName !=null and categoryName!=''">
@@ -147,9 +147,19 @@
         <if test="keyWord !=null and keyWord!=''">
             ,keyWord=#{keyWord}
         </if>
-        <if test="delFlag !=null and delFlag!=''">
+        <if test="updateBy !=null">
+            ,updateBy=#{updateBy}
+        </if>
+        <if test="updateTime !=null">
+            ,updateTime=#{updateTime}
+        </if>
+        <if test="delFlag !=null">
             ,delFlag=#{delFlag}
         </if>
         where id=#{id}
     </update>
+    <insert id="createBlog" parameterType="com.sandman.blog.entity.user.Blog">
+        insert into blog values(null,#{bloggerId},#{title},#{summary},#{content},#{contentNoTag},#{clickCount},#{replayCount},#{isTop}
+        ,#{isDraft},#{isForbiddenComment},#{blogType},#{onlyMeRead},#{categoryId},#{categoryName},#{keyWord},#{createBy},#{createTime},#{updateBy},#{updateTime},#{delFlag})
+    </insert>
 </mapper>

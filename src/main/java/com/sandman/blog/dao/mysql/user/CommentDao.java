@@ -14,4 +14,7 @@ public interface CommentDao {
     public List<Comment> getCommentMe(Long bloggerId);
     public Comment findById(Long id);
     public void deleteComment(Long id);
+/*
+    public List<Comment> getCommentByBlogId(Long blogId);
+*/
 }

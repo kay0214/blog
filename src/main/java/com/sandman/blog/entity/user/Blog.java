@@ -1,6 +1,7 @@
 package com.sandman.blog.entity.user;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 
 public class Blog {
     private Long id;
