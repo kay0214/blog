@@ -36,15 +36,15 @@ sftpServer:
   prefix: /var/www/html
   tempFilePath: C:\\Test #/home/sandman #MultiPartFile转File时，临时文件存放路径
   bloggerDefaultImg: http://39.104.80.30/spkIMG/sandman/blog/content/7/20180530152641ED5D0ECCB7034FC5ACBC753BD9ECCA33.jpg
-
+  templatesPath: C:\Test\templates
 elasticsearch:
   clusterName: sunpk-es
   host: 192.168.1.130
   port: 9303
 mail:
   smtp:
-    host: smtp.yeah.net
-    port: 25
-  senderAccount: sunpeikai@yeah.net
-  password: spkzq521
+    host: smtp.qq.com
+    port: 587
+  senderAccount: 929525390@qq.com
+  password: htnszqdfnzymbdcg
   myNickName: sandman

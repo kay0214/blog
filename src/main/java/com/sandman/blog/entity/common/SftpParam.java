@@ -15,6 +15,7 @@ public class SftpParam {
     private static String PATH_PREFIX;
     private static String TEMP_FILE_PATH;
     private static String BLOGGER_DEFAULT_IMG;
+    private static String TEMPLATES_PATH;
 
     @Value("${sftpServer.userName}")
     private void setUSERNAME(String USERNAME) {
@@ -79,5 +80,13 @@ public class SftpParam {
 
     public static String getBloggerDefaultImg() {
         return BLOGGER_DEFAULT_IMG;
+    }
+
+    public static String getTemplatesPath() {
+        return TEMPLATES_PATH;
+    }
+    @Value("${sftpServer.templatesPath}")
+    public void setTemplatesPath(String templatesPath) {
+        TEMPLATES_PATH = templatesPath;
     }
 }

@@ -97,7 +97,7 @@ public class ShiroSessionDao extends CachingSessionDAO{
                     sessionService.updateSession(new SessionEntity(prefix + session.getId(),SerializeUtils.serializaToString(shiroSession)));
                     //transaction.setex(prefix + session.getId(),expireTime,SerializeUtils.serializaToString(shiroSession));
                     logger.info(shiroSession.toString());
-                    logger.debug("sessionId {} name {} 被更新", session.getId(), session.getClass().getName());
+                    //logger.debug("sessionId {} name {} 被更新", session.getId(), session.getClass().getName());
                     //执行事务
                     //transaction.exec();
                 } catch (Exception e){
@@ -109,10 +109,10 @@ public class ShiroSessionDao extends CachingSessionDAO{
                     jedis.close();
                 }*/
             }else {
-                logger.debug("sessionId {} name {} 更新失败", session.getId(), session.getClass().getName());
+                //logger.debug("sessionId {} name {} 更新失败", session.getId(), session.getClass().getName());
             }
         } catch (Exception e){
-            logger.warn("更新Session失败", e);
+            //logger.warn("更新Session失败", e);
         }
 
     }
@@ -124,7 +124,7 @@ public class ShiroSessionDao extends CachingSessionDAO{
      */
     @Override
     protected void doDelete(Session session) {
-        logger.debug("begin doDelete {}", session);
+        //logger.debug("begin doDelete {}", session);
         sessionService.deleteSession(new SessionEntity(prefix + session.getId()));
 /*        Jedis jedis = null;
         try {
@@ -146,7 +146,7 @@ public class ShiroSessionDao extends CachingSessionDAO{
         try {
             Session session = super.getCachedSession(sessionId);
             super.uncache(session);
-            logger.debug("shiro session id {} 的缓存失效", sessionId);
+            //logger.debug("shiro session id {} 的缓存失效", sessionId);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -171,9 +171,9 @@ public class ShiroSessionDao extends CachingSessionDAO{
             sessionEntity.setSessionStr(SerializeUtils.serializaToString((ShiroSession) session));
             sessionService.createSession(sessionEntity);
             //jedis.setex(prefix + sessionId, expireTime, SerializeUtils.serializaToString((ShiroSession) session));
-            logger.info("sessionId {} name {} 被创建", sessionId, session.getClass().getName());
+            //logger.info("sessionId {} name {} 被创建", sessionId, session.getClass().getName());
         }catch (Exception e){
-            logger.warn("创建session失败",e);
+            //logger.warn("创建session失败",e);
         }/*finally {
             jedis.close();
         }*/
@@ -182,7 +182,7 @@ public class ShiroSessionDao extends CachingSessionDAO{
 
     @Override
     protected Session doReadSession(Serializable sessionId) {
-        logger.debug("begin doReadSession {}", sessionId);
+        //logger.debug("begin doReadSession {}", sessionId);
         //Jedis jedis = jedisPool.getResource();
         Session session = null;
         try {
@@ -192,13 +192,13 @@ public class ShiroSessionDao extends CachingSessionDAO{
             //String value = jedis.get(key);
             if(StringUtils.isNotBlank(value)){
                 session = SerializeUtils.deserializeFromString(value);
-                logger.info("sessionId {} value {}: ", sessionId, value);
+                //logger.info("sessionId {} value {}: ", sessionId, value);
                 //重置Redis中缓存过期的时间
                 //jedis.expire(key,expireTime);
-                logger.info("sessionId {} name {} 被读取", sessionId, session.getClass().getName());
+                //logger.info("sessionId {} name {} 被读取", sessionId, session.getClass().getName());
             }
         } catch (Exception e){
-            logger.warn("读取session失败");
+            //logger.warn("读取session失败");
         }/* finally {
             jedis.close();
         }*/
@@ -209,7 +209,7 @@ public class ShiroSessionDao extends CachingSessionDAO{
      * 从Redis中读取，但不重置Redis中缓存过期时间
      */
     public Session doReadSessionWithoutExpire(Serializable sessionId) {
-        logger.info("sessionId============={}",sessionId);
+        //logger.info("sessionId============={}",sessionId);
         Session session = null;
         String key = prefix + sessionId;
         SessionEntity sessionEntity = sessionService.findSessionById(key);

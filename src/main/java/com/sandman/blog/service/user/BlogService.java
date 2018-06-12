@@ -93,14 +93,21 @@ public class BlogService {
         Integer totalRow = blogDao.getAllBlog(keyWord).size();//查询出数据条数
         log.info("totalRow:::::{}",totalRow);
         PageHelper.startPage(pageNumber,size).setOrderBy(orderBy);
-
         List<Blog> blogList = blogDao.getAllBlog(keyWord);//查询出列表（已经分页）
-
         PageBean<Blog> pageBean = new PageBean<>(pageNumber,size,totalRow);//这里是为了计算页数，页码
-
         pageBean.setItems(blogList);
         List<Blog> result = pageBean.getItems();
 
+        if(result.size()==0){
+            keyWord = null;
+            totalRow = blogDao.getAllBlog(keyWord).size();//查询出数据条数
+            log.info("totalRow:::::{}",totalRow);
+            PageHelper.startPage(pageNumber,size).setOrderBy(orderBy);
+            blogList = blogDao.getAllBlog(keyWord);//查询出列表（已经分页）
+            pageBean = new PageBean<>(pageNumber,size,totalRow);//这里是为了计算页数，页码
+            pageBean.setItems(blogList);
+            result = pageBean.getItems();
+        }
         Map data = new HashMap();//最终返回的map
 
         data.put("totalRow",totalRow);
