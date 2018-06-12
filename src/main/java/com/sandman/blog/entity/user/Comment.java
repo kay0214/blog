@@ -1,7 +1,5 @@
 package com.sandman.blog.entity.user;
 
-import org.w3c.dom.stylesheets.LinkStyle;
-
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -10,14 +8,18 @@ public class Comment {
     private Long bloggerId;
     private Blogger blogger;//评论人详细信息
     private String content;//评论内容
+    private Long parentId;//回复的时候用，标识回复的哪一条评论id .没有就是-1
+    private String parentName;//回复的时候用，标识回复的谁
+    private Integer replayed;//1 被回复了 ；2 没有回复
     private Long blogId;
     private Blog blog;//本篇博客
-    private Integer status;//审核状态 0 待审核 1 审核通过 2 审核未通过
+    private Integer status;//审核状态 3 待审核 1 审核通过 2 审核未通过
     private Long createBy;
     private ZonedDateTime createTime;
     private Long updateBy;
     private ZonedDateTime updateTime;
     private Integer delFlag;
+    private List<Comment> commentList;
 
     public Long getId() {
         return id;
@@ -49,6 +51,30 @@ public class Comment {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public Long getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(Long parentId) {
+        this.parentId = parentId;
+    }
+
+    public String getParentName() {
+        return parentName;
+    }
+
+    public void setParentName(String parentName) {
+        this.parentName = parentName;
+    }
+
+    public Integer getReplayed() {
+        return replayed;
+    }
+
+    public void setReplayed(Integer replayed) {
+        this.replayed = replayed;
     }
 
     public Long getBlogId() {
@@ -115,6 +141,14 @@ public class Comment {
         this.delFlag = delFlag;
     }
 
+    public List<Comment> getCommentList() {
+        return commentList;
+    }
+
+    public void setCommentList(List<Comment> commentList) {
+        this.commentList = commentList;
+    }
+
     @Override
     public String toString() {
         return "Comment{" +
@@ -122,6 +156,9 @@ public class Comment {
                 ", bloggerId=" + bloggerId +
                 ", blogger=" + blogger +
                 ", content='" + content + '\'' +
+                ", parentId=" + parentId +
+                ", parentName='" + parentName + '\'' +
+                ", replayed=" + replayed +
                 ", blogId=" + blogId +
                 ", blog=" + blog +
                 ", status=" + status +
@@ -130,6 +167,7 @@ public class Comment {
                 ", updateBy=" + updateBy +
                 ", updateTime=" + updateTime +
                 ", delFlag=" + delFlag +
+                ", commentList=" + commentList +
                 '}';
     }
 }

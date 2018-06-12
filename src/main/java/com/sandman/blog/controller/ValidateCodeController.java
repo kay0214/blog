@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
  * Created by sunpeikai on 2018/5/4.
  */
 @RestController
-@RequestMapping("/api/sandman/v1/validateCode")
+@RequestMapping("/api/blog/v1/validateCode")
 public class ValidateCodeController {
     private final Logger log = LoggerFactory.getLogger(getClass());
     @Autowired

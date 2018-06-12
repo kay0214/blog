@@ -10,4 +10,7 @@
     <insert id="createCategory" parameterType="com.sandman.blog.entity.user.Category">
         insert into category values(null,#{bloggerId},#{categoryName},#{blogCount},#{orderNo},null,#{createTime},null,#{updateTime},#{delFlag})
     </insert>
+    <update id="updateCategory" parameterType="com.sandman.blog.entity.user.Category">
+        update category set categoryName = #{categoryName},blogCount = #{blogCount},orderNo = #{orderNo},updateTime = #{updateTime},delFlag = #{delFlag} where id = #{id}
+    </update>
 </mapper>

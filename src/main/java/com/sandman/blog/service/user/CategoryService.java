@@ -78,4 +78,9 @@ public class CategoryService {
         log.info("insert category ============ {}",success);
         return new BaseDto(ResponseStatus.SUCCESS);
     }
+    public void addCountByCategoryId(Long id){
+        Category category = categoryDao.getCategoryById(id);
+        category.setBlogCount(category.getBlogCount() + 1);
+        categoryDao.updateCategory(category);
+    }
 }

@@ -1,5 +1,25 @@
 <?xml version="1.0" encoding="UTF-8" ?>  
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
 <mapper namespace="com.sandman.blog.dao.mysql.user.BloggerDao">
-
+    <select id="findById" parameterType="Long" resultType="com.sandman.blog.entity.user.Blogger">
+        select * from blogger where delFlag=0 and id = #{id}
+    </select>
+    <insert id="createBlogger" parameterType="com.sandman.blog.entity.user.Blogger">
+        insert into blogger values(#{id},#{userName},#{nickName},null,null,#{imageUrl},#{originalBlogCount},#{transferBlogCount},#{visitCount},#{commentCount},#{createBy},#{createTime},#{updateBy},#{updateTime},#{delFlag})
+    </insert>
+    <update id="updateBlogger" parameterType="com.sandman.blog.entity.user.Blogger">
+        update blogger set userName=#{userName},
+        nickName=#{nickName},
+        sign=#{sign},
+        proFile=#{proFile},
+        imageUrl=#{imageUrl},
+        originalBlogCount=#{originalBlogCount},
+        transferBlogCount=#{transferBlogCount},
+        visitCount=#{visitCount},
+        commentCount=#{commentCount},
+        updateBy=#{updateBy},
+        updateTime=#{updateTime},
+        delFlag=#{delFlag}
+        where id = #{id}
+    </update>
 </mapper>

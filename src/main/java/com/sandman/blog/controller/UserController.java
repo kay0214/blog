@@ -31,16 +31,22 @@ public class UserController {
      * POST : Create a new user.
      */
     @PostMapping("/createUser")
-    public BaseDto createUser(@RequestBody User user, String validateCode){
+    public BaseDto createUser(@RequestParam("userName")String userName,
+                              @RequestParam("password")String password,
+                              @RequestParam("mobile")String mobile,
+                              @RequestParam("email")String email,
+                              @RequestParam("validateCode")String validateCode){
         //这里进行简单校验，在service里面进行复杂校验
-        log.debug("REST request to save User : {},validateCode:{}", user,validateCode);
-        if (user.getId() != null) {
-            return new BaseDto(415,"创建用户你带什么ID啊!");
+        if (userName == null || "".equals(userName) || password == null || "".equals(password)
+                || mobile == null || "".equals(mobile) || email == null || "".equals(email) || validateCode == null || "".equals(validateCode)) {
+            return new BaseDto(416,"请确认输入信息!");
         }
-        if(validateCode==null || "".equals(validateCode)){
-            return new BaseDto(416,"请先填写验证码!");
-        }
-
+        User user = new User();
+        user.setUserName(userName);
+        user.setPassword(password);
+        user.setMobile(mobile);
+        user.setEmail(email);
+        log.info("REST request to save User : {},validateCode:{}", user,validateCode);
         return userService.createUser(user,validateCode);
     }
     @GetMapping("/getCurUserInfo")

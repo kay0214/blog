@@ -1,5 +1,6 @@
 package com.sandman.blog.dao.mysql.user;
 
+import com.sandman.blog.entity.user.Blogger;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -7,4 +8,7 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface BloggerDao {
+    public Blogger findById(Long id);
+    public void updateBlogger(Blogger blogger);
+    public void createBlogger(Blogger blogger);
 }

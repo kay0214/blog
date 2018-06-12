@@ -6,6 +6,7 @@ import com.sandman.blog.entity.system.Permission;
 import com.sandman.blog.entity.system.Role;
 import com.sandman.blog.entity.system.User;
 import com.sandman.blog.entity.user.ValidateCode;
+import com.sandman.blog.service.user.BloggerService;
 import com.sandman.blog.service.user.ValidateCodeService;
 import com.sandman.blog.utils.PasswordEncrypt;
 import com.sandman.blog.utils.RandomUtils;
@@ -37,6 +38,8 @@ public class UserService {
     private RoleService roleService;
     @Autowired
     private PermissionService permissionService;
+    @Autowired
+    private BloggerService bloggerService;
     /**
      * 注册用户
      */
@@ -58,6 +61,7 @@ public class UserService {
         if(!verifySuccess)//校验失败return，否则继续往下走
             return new BaseDto(417,"验证码不正确!",user);
         //所有校验已经完成，创建用户
+        user.setNickName(user.getUserName());
         user.setSalt(user.getUserName() + RandomUtils.getUuidStr());//用户盐 = userName + 随机uuid
         user.setPassword(PasswordEncrypt.getEncryptedPwdBySalt(user.getPassword(),user.getSalt()));//密码加密 use salt
         user.setGold(0);
@@ -68,9 +72,10 @@ public class UserService {
         user.setUpdateTime(ZonedDateTime.now());
         user.setDelFlag(0);
 
-        //User user = userMapper.toEntity(userDTO);
-        //user = userRepository.save(user);
         userDao.createUser(user);
+        user = findUserByUserName(user.getUserName());
+        bloggerService.createBlogger(user.getId(),user.getUserName(),user.getNickName());//创建博客账户
+
         deleteValidateCode(user);//注册完成，异步删除验证码
         return new BaseDto(200,"注册成功!",user);
 

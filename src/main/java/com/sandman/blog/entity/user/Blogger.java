@@ -9,6 +9,10 @@ public class Blogger {
     private String sign;//个性签名
     private String proFile;//个人简介
     private String imageUrl;//头像url地址
+    private Integer originalBlogCount;
+    private Integer transferBlogCount;
+    private Integer visitCount;
+    private Integer commentCount;
     private Long createBy;//创建人
     private ZonedDateTime createTime;//创建时间
     private Long updateBy;//更新人
@@ -63,6 +67,38 @@ public class Blogger {
         this.imageUrl = imageUrl;
     }
 
+    public Integer getOriginalBlogCount() {
+        return originalBlogCount;
+    }
+
+    public void setOriginalBlogCount(Integer originalBlogCount) {
+        this.originalBlogCount = originalBlogCount;
+    }
+
+    public Integer getTransferBlogCount() {
+        return transferBlogCount;
+    }
+
+    public void setTransferBlogCount(Integer transferBlogCount) {
+        this.transferBlogCount = transferBlogCount;
+    }
+
+    public Integer getVisitCount() {
+        return visitCount;
+    }
+
+    public void setVisitCount(Integer visitCount) {
+        this.visitCount = visitCount;
+    }
+
+    public Integer getCommentCount() {
+        return commentCount;
+    }
+
+    public void setCommentCount(Integer commentCount) {
+        this.commentCount = commentCount;
+    }
+
     public Long getCreateBy() {
         return createBy;
     }
@@ -112,6 +148,10 @@ public class Blogger {
                 ", sign='" + sign + '\'' +
                 ", proFile='" + proFile + '\'' +
                 ", imageUrl='" + imageUrl + '\'' +
+                ", originalBlogCount=" + originalBlogCount +
+                ", transferBlogCount=" + transferBlogCount +
+                ", visitCount=" + visitCount +
+                ", commentCount=" + commentCount +
                 ", createBy=" + createBy +
                 ", createTime=" + createTime +
                 ", updateBy=" + updateBy +

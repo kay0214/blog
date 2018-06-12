@@ -11,10 +11,7 @@ import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
@@ -36,21 +33,27 @@ public class BlogController {
         }
         return new BaseDto(ResponseStatus.HAVE_NO_DATA);
     }
-    @ApiOperation(value = "分页获取全部博文,首页用")
+    @ApiOperation(value = "分页获取全部博文,首页用。已废弃，合并到关键词搜索中")
     @GetMapping("/blog/getAllBlog")
-    public BaseDto getAllBlog(Integer pageNumber, Integer size){
-        return blogService.getAllBlog(pageNumber,size);
+    public BaseDto getAllBlog(Integer pageNumber, Integer size,String sortType,String order){
+        return blogService.getAllBlog(pageNumber, size, sortType, order);
     }
     @ApiOperation(value = "根据关键词模糊搜索")
     @GetMapping("/blog/findByKeyWord")
-    public BaseDto findByKeyWord(Integer pageNumber, Integer size,String keyWord){
-        return blogService.findByKeyWord(pageNumber, size, keyWord);
+    public BaseDto findByKeyWord(Integer pageNumber, Integer size,String sortType,String order,String keyWord){
+        return blogService.findByKeyWord(pageNumber, size,sortType,order, keyWord);
     }
     @ApiOperation(value = "查询某位博主的所有博客")
+    @GetMapping("/blog/findAllByBloggerId")
+    public BaseDto findAllByBloggerId(Integer pageNumber, Integer size,String sortType,String order,Long bloggerId){
+        bloggerId = (bloggerId == null)?ShiroSecurityUtils.getCurrentUserId():bloggerId;
+        return blogService.findByBloggerId(pageNumber, size, sortType, order, bloggerId,false);//非公开博客也一起查询
+    }
+    @ApiOperation(value = "查询某位博主的所有公开博客")
     @GetMapping("/blog/findByBloggerId")
     public BaseDto findByBloggerId(Integer pageNumber, Integer size,String sortType,String order,Long bloggerId){
         bloggerId = (bloggerId == null)?ShiroSecurityUtils.getCurrentUserId():bloggerId;
-        return blogService.findByBloggerId(pageNumber, size, sortType, order, bloggerId);
+        return blogService.findByBloggerId(pageNumber, size, sortType, order, bloggerId,true);
     }
     @ApiOperation(value = "根据id删除博客（假删）")
     @GetMapping("/blog/deleteBlog")
@@ -74,8 +77,9 @@ public class BlogController {
     @PostMapping("/blog/saveBlog")
     public BaseDto saveBlog(Blog blog){
         Long bloggerId = ShiroSecurityUtils.getCurrentUserId();
+        log.info("保存博客的博主id:::::::::::::::{}",bloggerId);
         blog.setBloggerId(bloggerId);
-        log.info(blog.toString());
+        log.debug(blog.toString());
         if(bloggerId!=null){
             return blogService.saveBlog(blog);
         }

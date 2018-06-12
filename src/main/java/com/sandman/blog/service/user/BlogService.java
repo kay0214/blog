@@ -2,6 +2,7 @@ package com.sandman.blog.service.user;
 
 import com.github.pagehelper.PageHelper;
 import com.sandman.blog.dao.mysql.user.BlogDao;
+import com.sandman.blog.dao.mysql.user.BloggerDao;
 import com.sandman.blog.dao.mysql.user.CategoryDao;
 import com.sandman.blog.dao.mysql.user.CommentDao;
 import com.sandman.blog.entity.common.BaseDto;
@@ -9,6 +10,7 @@ import com.sandman.blog.entity.common.ResponseStatus;
 import com.sandman.blog.entity.common.SftpParam;
 import com.sandman.blog.entity.common.SortParam;
 import com.sandman.blog.entity.user.Blog;
+import com.sandman.blog.entity.user.Blogger;
 import com.sandman.blog.entity.user.Category;
 import com.sandman.blog.entity.user.Comment;
 import com.sandman.blog.utils.*;
@@ -34,7 +36,9 @@ public class BlogService {
     @Autowired
     private CategoryDao categoryDao;
     @Autowired
-    private CommentService commentService;
+    private BloggerService bloggerService;
+    @Autowired
+    private CategoryService categoryService;
 
     public BaseDto getBlogById(Long id){
         Long bloggerId = ShiroSecurityUtils.getCurrentUserId();
@@ -47,44 +51,101 @@ public class BlogService {
         }
         return new BaseDto(ResponseStatus.SUCCESS,blog);
     }
-    public BaseDto getAllBlog(Integer pageNumber, Integer size){
+    public BaseDto getAllBlog(Integer pageNumber, Integer size,String sortType,String order){
+        String keyWord = "";
         log.info("pageNumber:{},,,,,size:{}",pageNumber,size);
-        List<Blog> blogList = blogDao.getAllBlog(new SortParam(pageNumber,size));
-        log.info(blogList.toString());
-        return new BaseDto(ResponseStatus.SUCCESS,blogList);
-    }
-    public BaseDto findByKeyWord(Integer pageNumber, Integer size,String keyWord){
         log.info("pageNumber======={},size========{},keyword========{}",pageNumber,size,keyWord);
-        SortParam sortParam = new SortParam(pageNumber,size);
-        if(keyWord!=null && !"".equals(keyWord) && !"undefined".equals(keyWord)){
-            sortParam.setCause(keyWord);
-        }
-        List<Blog> blogList = blogDao.getAllBlog(sortParam);
-        if(blogList.size()<1){ // 如果根据keyword查询出来的数据条数 0 ，就不加keyword去查询
-            sortParam.setCause(null);
-            blogList = blogDao.getAllBlog(sortParam);
-        }
-        log.info(blogList.toString());
-        return new BaseDto(ResponseStatus.SUCCESS,blogList);
-    }
-    public BaseDto findByBloggerId(Integer pageNumber, Integer size,String sortType,String order,Long bloggerId){
-        log.info("pageNumber======={},size========{},bloggerId========{}",pageNumber,size,bloggerId);
+
         pageNumber = (pageNumber==null || pageNumber<1)?1:pageNumber;
         size = (size==null || size<0)?10:size;
         sortType = (sortType==null || "".equals(sortType))?"desc":sortType;
         order = (order==null || "".equals(order))?"createTime":order;
         String orderBy = order + " " + sortType;//默认按照id降序排序
 
-        Integer totalRow = blogDao.findByBloggerId(bloggerId).size();//查询出数据条数
+        Integer totalRow = blogDao.getAllBlog(keyWord).size();//查询出数据条数
         log.info("totalRow:::::{}",totalRow);
         PageHelper.startPage(pageNumber,size).setOrderBy(orderBy);
 
-        List<Blog> blogList = blogDao.findByBloggerId(bloggerId);//查询出列表（已经分页）
+        List<Blog> blogList = blogDao.getAllBlog(keyWord);//查询出列表（已经分页）
 
         PageBean<Blog> pageBean = new PageBean<>(pageNumber,size,totalRow);//这里是为了计算页数，页码
 
         pageBean.setItems(blogList);
         List<Blog> result = pageBean.getItems();
+
+        Map data = new HashMap();//最终返回的map
+
+        data.put("totalRow",totalRow);
+        data.put("totalPage",pageBean.getTotalPage());
+        data.put("currentPage",pageBean.getCurrentPage());//默认0就是第一页
+        data.put("blogList",result);
+        return new BaseDto(ResponseStatus.SUCCESS,data);
+    }
+    public BaseDto findByKeyWord(Integer pageNumber, Integer size,String sortType,String order,String keyWord){
+        log.info("pageNumber======={},size========{},keyword========{}",pageNumber,size,keyWord);
+
+        pageNumber = (pageNumber==null || pageNumber<1)?1:pageNumber;
+        size = (size==null || size<0)?10:size;
+        sortType = (sortType==null || "".equals(sortType))?"desc":sortType;
+        order = (order==null || "".equals(order))?"createTime":order;
+        String orderBy = order + " " + sortType;//默认按照id降序排序
+
+        Integer totalRow = blogDao.getAllBlog(keyWord).size();//查询出数据条数
+        log.info("totalRow:::::{}",totalRow);
+        PageHelper.startPage(pageNumber,size).setOrderBy(orderBy);
+
+        List<Blog> blogList = blogDao.getAllBlog(keyWord);//查询出列表（已经分页）
+
+        PageBean<Blog> pageBean = new PageBean<>(pageNumber,size,totalRow);//这里是为了计算页数，页码
+
+        pageBean.setItems(blogList);
+        List<Blog> result = pageBean.getItems();
+
+        Map data = new HashMap();//最终返回的map
+
+        data.put("totalRow",totalRow);
+        data.put("totalPage",pageBean.getTotalPage());
+        data.put("currentPage",pageBean.getCurrentPage());//默认0就是第一页
+        data.put("blogList",result);
+        return new BaseDto(ResponseStatus.SUCCESS,data);
+    }
+    public BaseDto findByBloggerId(Integer pageNumber, Integer size,String sortType,String order,Long bloggerId,boolean publicBlogs){
+        log.info("是否是所有用户可见的文章:{}",publicBlogs);
+        log.info("pageNumber======={},size========{},sortType======{},order======={},bloggerId========{}",pageNumber,size,sortType,order,bloggerId);
+        pageNumber = (pageNumber==null || pageNumber<1)?1:pageNumber;
+        size = (size==null || size<0)?10:size;
+        sortType = (sortType==null || "".equals(sortType))?"desc":sortType;
+        order = (order==null || "".equals(order))?"createTime":order;
+        String orderBy = order + " " + sortType;//默认按照id降序排序
+
+        Integer totalRow = 0;
+        PageBean<Blog> pageBean = null;
+        List<Blog> result = new ArrayList<>();
+        if(publicBlogs){
+            totalRow = blogDao.findByBloggerId(bloggerId).size();//查询出数据条数
+            log.info("totalRow:::::{}",totalRow);
+            PageHelper.startPage(pageNumber,size).setOrderBy(orderBy);
+
+            List<Blog> blogList = blogDao.findByBloggerId(bloggerId);//查询出列表（已经分页）
+
+            pageBean = new PageBean<>(pageNumber,size,totalRow);//这里是为了计算页数，页码
+
+            pageBean.setItems(blogList);
+            result = pageBean.getItems();
+
+        }else{
+            totalRow = blogDao.findAllByBloggerId(bloggerId).size();//查询出数据条数
+            log.info("totalRow:::::{}",totalRow);
+            PageHelper.startPage(pageNumber,size).setOrderBy(orderBy);
+
+            List<Blog> blogList = blogDao.findAllByBloggerId(bloggerId);//查询出列表（已经分页）
+
+            pageBean = new PageBean<>(pageNumber,size,totalRow);//这里是为了计算页数，页码
+
+            pageBean.setItems(blogList);
+            result = pageBean.getItems();
+
+        }
 
         Map data = new HashMap();//最终返回的map
 
@@ -119,6 +180,7 @@ public class BlogService {
         return new BaseDto(ResponseStatus.NOT_HAVE_PERMISSION_TO_DELETE);
     }
     public BaseDto saveBlog(Blog blog){
+        log.info(blog.toString());
         Category category = categoryDao.getCategoryById(blog.getCategoryId());//根据用户自定义类型id查询自定义类型
         if(blog.getId() != null){ //id不为空就是修改
             Blog savedBlog = blogDao.getBlogById(blog.getId());
@@ -164,6 +226,12 @@ public class BlogService {
             blog.setUpdateTime(ZonedDateTime.now());
             blog.setDelFlag(0);
             blogDao.createBlog(blog);//创建到数据库
+            categoryService.addCountByCategoryId(blog.getCategoryId());//对应的分类博客数量 + 1
+            if(blog.getBlogType() == 1){
+                bloggerService.addTransferBlogCount(blog.getBloggerId());//转载博客数 + 1
+            }else{
+                bloggerService.addOriginalBlogCount(blog.getBloggerId());//原创博客数 + 1
+            }
             return new BaseDto(ResponseStatus.SUCCESS);
         }
     }

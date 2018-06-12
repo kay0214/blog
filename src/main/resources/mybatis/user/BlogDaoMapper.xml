@@ -29,6 +29,10 @@
         r.sign as r_sign,
         r.proFile as r_proFile,
         r.imageUrl as r_imageUrl,
+        r.originalBlogCount as r_originalBlogCount,
+        r.transferBlogCount as r_transferBlogCount,
+        r.visitCount as r_visitCount,
+        r.commentCount as r_commentCount,
         r.createBy as r_createBy,
         r.createTime as r_createTime,
         r.updateBy as r_updateBy,
@@ -64,44 +68,38 @@
             <result property="sign" column="r_sign"/>
             <result property="proFile" column="r_proFile"/>
             <result property="imageUrl" column="r_imageUrl"/>
+            <result property="originalBlogCount" column="r_originalBlogCount"/>
+            <result property="transferBlogCount" column="r_transferBlogCount"/>
+            <result property="visitCount" column="r_visitCount"/>
+            <result property="commentCount" column="r_commentCount"/>
             <result property="createBy" column="r_createBy"/>
             <result property="createTime" column="r_createTime"/>
             <result property="updateBy" column="r_updateBy"/>
             <result property="updateTime" column="r_updateTime"/>
             <result property="delFlag" column="r_delFlag"/>
-
         </association>
     </resultMap>
     <select id="getBlogById" parameterType="Long" resultMap="blogResultMap">
       select <include refid="blog"/> from blog t,blogger r where t.delFlag=0 and t.bloggerId = r.id and t.id = #{id}
     </select>
     <select id="getAllBlog" parameterType="com.sandman.blog.entity.common.SortParam" resultMap="blogResultMap">
-        select <include refid="blog"/> from blog t,blogger r where t.delFlag=0
-        <if test="cause!=null and cause!=''">
-            and (t.title like CONCAT('%',#{cause},'%') or t.contentNoTag like CONCAT('%',#{cause},'%'))
+        select <include refid="blog"/> from blog t,blogger r where t.delFlag=0 and t.bloggerId = r.id and t.isDraft = 0 and t.onlyMeRead = 0
+        <if test="keyWord!=null and keyWord!='' and keyWord != 'undefined'">
+            and (t.title like CONCAT('%',#{keyWord},'%') or t.contentNoTag like CONCAT('%',#{keyWord},'%'))
         </if>
-        <choose>
-            <when test="order!=null">
-                order by #{order}
-            </when>
-            <otherwise>
-                order by t.createBy
-            </otherwise>
-        </choose>
-        <choose>
-            <when test="sortType!=null">
-                #{sortType}
-            </when>
-            <otherwise>
-                desc
-            </otherwise>
-        </choose>
-        <if test="pageNumber!=null and size!=null">
-            limit #{startRow},#{size}
-        </if>
+
     </select>
     <select id="findByBloggerId" parameterType="Long" resultMap="blogResultMap">
-        select <include refid="blog"/> from blog t,blogger r where t.delFlag=0 and bloggerId = #{bloggerId}
+        select <include refid="blog"/> from blog t,blogger r where t.delFlag=0 and t.bloggerId = r.id and t.isDraft = 0 and t.onlyMeRead = 0
+        <if test="bloggerId != null">
+            and t.bloggerId = #{bloggerId}
+        </if>
+    </select>
+    <select id="findAllByBloggerId" parameterType="Long" resultMap="blogResultMap">
+        select <include refid="blog"/> from blog t,blogger r where t.delFlag=0 and t.bloggerId = r.id
+        <if test="bloggerId != null">
+            and t.bloggerId = #{bloggerId}
+        </if>
     </select>
     <update id="updateBlog" parameterType="com.sandman.blog.entity.user.Blog">
         update blog set updateTime=#{updateTime}

@@ -5,7 +5,7 @@
 		select * from user where delFlag=0 and userName=#{userName}
 	</select>
 	<insert id="createUser" parameterType="com.sandman.blog.entity.system.User">
-		insert into user values(null,#{userName},#{password},#{nickName},#{mobile},#{email},#{gold},#{available},#{createBy},#{createTime},#{updateBy},#{updateTime},#{delFlag})
+		insert into user values(null,#{userName},#{password},#{nickName},#{mobile},#{email},#{gold},#{available},#{salt},#{createBy},#{createTime},#{updateBy},#{updateTime},#{delFlag})
 	</insert>
 	<update id="updateUser" parameterType="com.sandman.blog.entity.system.User">
 		update user set updateTime=#{updateTime}

@@ -26,9 +26,9 @@ public class CategoryController {
     }
     @ApiOperation(value = "分页获取用户所有的自定义分类")
     @GetMapping("/category/getCategoryListByBloggerId")
-    public BaseDto getCategoryListByBloggerId(Integer pageNumber, Integer size,String sortType,String order){
+    public BaseDto getCategoryListByBloggerId(Integer pageNumber, Integer size,String sortType,String order,Long bloggerId){
         //TODO 改成分页获取，每页10条
-        Long bloggerId = ShiroSecurityUtils.getCurrentUserId();
+        bloggerId = (bloggerId == null)?ShiroSecurityUtils.getCurrentUserId():bloggerId;
         if(bloggerId!=null){
             return categoryService.getCategoryListByBloggerId(pageNumber,size,sortType,order,bloggerId);
         }
@@ -36,14 +36,14 @@ public class CategoryController {
     }
     @ApiOperation(value = "获取用户所有的自定义分类")
     @GetMapping("/category/getAllCategoryByBloggerId")
-    public BaseDto getAllCategoryByBloggerId(){
-        Long bloggerId = ShiroSecurityUtils.getCurrentUserId();
+    public BaseDto getAllCategoryByBloggerId(Long bloggerId){
+        bloggerId = (bloggerId == null)?ShiroSecurityUtils.getCurrentUserId():bloggerId;
         if(bloggerId!=null){
             return categoryService.getAllCategoryByBloggerId(bloggerId);
         }
         return new BaseDto(ResponseStatus.HAVE_NO_DATA);
     }
-    @ApiOperation(value = "获取用户所有的自定义分类")
+    @ApiOperation(value = "用户创建自定义分类")
     @GetMapping("/category/createCategory")
     public BaseDto createCategory(String categoryName){
         log.info("controller ::::::: categoryName======={}",categoryName);

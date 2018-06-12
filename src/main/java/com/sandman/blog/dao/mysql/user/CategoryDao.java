@@ -13,4 +13,5 @@ public interface CategoryDao {
     public Category getCategoryById(Long id);
     public List<Category> getCategoryListByBloggerId(Long bloggerId);
     public boolean createCategory(Category category);
+    public void updateCategory(Category category);
 }

@@ -5,6 +5,9 @@
         t.id as id,
         t.bloggerId as bloggerId,
         t.content as content,
+        t.parentId as parentId,
+        t.parentName as parentName,
+        t.replayed as replayed,
         t.blogId as blogId,
         t.status as status,
         t.createBy as createBy,
@@ -12,24 +15,51 @@
         t.updateBy as updateBy,
         t.updateTime as updateTime,
         t.delFlag as delFlag,
-        blogger.id as blogger_id,
-        blogger.userName as blogger_userName,
-        blogger.nickName as blogger_nickName,
+	   	blogger.id AS blogger_id,
+	   	blogger.userName AS blogger_userName,
+	   	blogger.nickName AS blogger_nickName,
+	   	blogger.sign AS blogger_sign,
+	   	blogger.proFile AS blogger_proFile,
+	  	blogger.imageUrl AS blogger_imageUrl,
+	  	blogger.originalBlogCount as blogger_originalBlogCount,
+        blogger.transferBlogCount as blogger_transferBlogCount,
+        blogger.visitCount as blogger_visitCount,
+        blogger.commentCount as blogger_commentCount,
+	   	blogger.createBy AS blogger_createBy,
+	   	blogger.createTime AS blogger_createTime,
+	  	blogger.updateBy AS blogger_updateBy,
+	   	blogger.updateTime AS blogger_updateTime,
+	   	blogger.delFlag AS blogger_delFlag,
 
         blog.id as blog_id,
         blog.bloggerId as blog_bloggerId,
-        blog.title as blog_title
-/*
-        replay.id as replay_id,
-        replay.bloggerId as replay_bloggerId,
-        replay.content as replay_content,
-        replay.commentId as replay_commentId,
-        replay.createTime as replay_createTime*/
+        blog.title as blog_title,
+        blog.summary as blog_summary,
+        blog.content as blog_content,
+        blog.contentNoTag as blog_contentNoTag,
+        blog.clickCount as blog_clickCount,
+        blog.replayCount as blog_replayCount,
+        blog.isTop as blog_isTop,
+        blog.isDraft as blog_isDraft,
+        blog.isForbiddenComment as blog_isForbiddenComment,
+        blog.blogType as blog_blogType,
+        blog.onlyMeRead as blog_onlyMeRead,
+        blog.categoryId as blog_categoryId,
+        blog.categoryName as blog_categoryName,
+        blog.keyWord as blog_keyWord,
+        blog.createBy as blog_createBy,
+        blog.createTime as blog_createTime,
+        blog.updateBy as blog_updateBy,
+        blog.updateTime as blog_updateTime,
+        blog.delFlag as blog_delFlag
     </sql>
     <resultMap id="commentResultMap" type="com.sandman.blog.entity.user.Comment">
         <id property="id" column="id"/>
         <result property="bloggerId" column="bloggerId"/>
         <result property="content" column="content"/>
+        <result property="parentId" column="parentId"/>
+        <result property="parentName" column="parentName"/>
+        <result property="replayed" column="replayed"/>
         <result property="blogId" column="blogId"/>
         <result property="status" column="status"/>
         <result property="createBy" column="createBy"/>
@@ -41,13 +71,73 @@
             <id property="id" column="blogger_id"/>
             <result property="userName" column="blogger_userName"/>
             <result property="nickName" column="blogger_nickName"/>
+            <result property="sign" column="blogger_sign"/>
+            <result property="proFile" column="blogger_proFile"/>
+            <result property="imageUrl" column="blogger_imageUrl"/>
+            <result property="originalBlogCount" column="blogger_originalBlogCount"/>
+            <result property="transferBlogCount" column="blogger_transferBlogCount"/>
+            <result property="visitCount" column="blogger_visitCount"/>
+            <result property="commentCount" column="blogger_commentCount"/>
+            <result property="createBy" column="blogger_createBy"/>
+            <result property="createTime" column="blogger_createTime"/>
+            <result property="updateTime" column="blogger_updateTime"/>
+            <result property="delFlag" column="blogger_delFlag"/>
         </association>
         <association property="blog" javaType="com.sandman.blog.entity.user.Blog">
             <id property="id" column="blog_id"/>
             <result property="bloggerId" column="blog_bloggerId"/>
             <result property="title" column="blog_title"/>
+            <result property="summary" column="blog_summary"/>
+            <result property="content" column="blog_content"/>
+            <result property="contentNoTag" column="blog_contentNoTag"/>
+            <result property="clickCount" column="blog_clickCount"/>
+            <result property="replayCount" column="blog_replayCount"/>
+            <result property="isTop" column="blog_isTop"/>
+            <result property="isDraft" column="blog_isDraft"/>
+            <result property="isForbiddenComment" column="blog_isForbiddenComment"/>
+            <result property="blogType" column="blog_blogType"/>
+            <result property="onlyMeRead" column="blog_onlyMeRead"/>
+            <result property="categoryId" column="blog_categoryId"/>
+            <result property="categoryName" column="blog_categoryName"/>
+            <result property="keyWord" column="blog_keyWord"/>
+            <result property="createBy" column="blog_createBy"/>
+            <result property="createTime" column="blog_createTime"/>
+            <result property="updateBy" column="blog_updateBy"/>
+            <result property="updateTime" column="blog_updateTime"/>
+            <result property="delFlag" column="blog_delFlag"/>
         </association>
+    </resultMap>
 
+    <resultMap id="commentWithReplayResultMap" type="com.sandman.blog.entity.user.Comment">
+        <id property="id" column="bc_id"/>
+        <result property="bloggerId" column="bc_bloggerId"/>
+        <result property="content" column="bc_content"/>
+        <result property="parentId" column="bc_parentId"/>
+        <result property="parentName" column="bc_parentName"/>
+        <result property="replayed" column="bc_replayed"/>
+        <result property="blogId" column="bc_blogId"/>
+        <result property="status" column="bc_status"/>
+        <result property="createBy" column="bc_createBy"/>
+        <result property="createTime" column="bc_createTime"/>
+        <result property="updateBy" column="bc_updateBy"/>
+        <result property="updateTime" column="bc_updateTime"/>
+        <result property="delFlag" column="bc_delFlag"/>
+        <association property="blogger" javaType="com.sandman.blog.entity.user.Blogger">
+            <id property="id" column="b_id"/>
+            <result property="userName" column="b_userName"/>
+            <result property="nickName" column="b_nickName"/>
+            <result property="sign" column="b_sign"/>
+            <result property="proFile" column="b_proFile"/>
+            <result property="imageUrl" column="b_imageUrl"/>
+            <result property="originalBlogCount" column="b_originalBlogCount"/>
+            <result property="transferBlogCount" column="b_transferBlogCount"/>
+            <result property="visitCount" column="b_visitCount"/>
+            <result property="commentCount" column="b_commentCount"/>
+            <result property="createBy" column="b_createBy"/>
+            <result property="createTime" column="b_createTime"/>
+            <result property="updateTime" column="b_updateTime"/>
+            <result property="delFlag" column="b_delFlag"/>
+        </association>
     </resultMap>
     <select id="getMyComment" parameterType="Long" resultMap="commentResultMap">
         select <include refid="comment"/> from blog_comment t,blogger blogger,blog blog where t.delFlag=0
@@ -64,8 +154,64 @@
     <update id="deleteComment" parameterType="Long">
         update blog_comment set delFlag = 1 where id = #{id}
     </update>
-<!--    <select id="getCommentByBlogId" parameterType="Long" resultMap="commentResultMap">
-        select <include refid="comment"/> from blog_comment t,blogger blogger,blog blog  where t.delFlag=0
-        and t.bloggerId = blogger.id and t.blogId = blog.id and t.blogId = #{blogId}
-    </select>-->
+    <update id="deleteReplay" parameterType="Long">
+        update blog_comment set delFlag = 1 where parentId = #{parentId}
+    </update>
+    <update id="updateComment" parameterType="com.sandman.blog.entity.user.Comment">
+        update blog_comment set
+        bloggerId = #{bloggerId},
+        content = #{content},
+        parentId = #{parentId},
+        parentName = #{parentName},
+        replayed = #{replayed},
+        blogId = #{blogId},
+        status = #{status},
+        updateBy = #{updateBy},
+        updateTime = #{updateTime},
+        delFlag = #{delFlag}
+        where id = #{id}
+    </update>
+    <select id="getCommentByBlogId" parameterType="Long" resultMap="commentWithReplayResultMap">
+      SELECT
+	    bc.id AS bc_id,
+		bc.bloggerId AS bc_bloggerId,
+	  	bc.content AS bc_content,
+	  	bc.parentId AS bc_parentId,
+	  	bc.parentName AS bc_parentName,
+	  	bc.replayed AS bc_replayed,
+	  	bc.blogId AS bc_blogId,
+	  	bc.status AS bc_status,
+	   	bc.createBy AS bc_createBy,
+	  	bc.createTime AS bc_createTime,
+	   	bc.updateBy AS bc_updateBy,
+	   	bc.updateTime AS bc_updateTime,
+	   	bc.delFlag AS bc_delFlag,
+	   	b.id AS b_id,
+	   	b.userName AS b_userName,
+	   	b.nickName AS b_nickName,
+	   	b.sign AS b_sign,
+	   	b.proFile AS b_proFile,
+	  	b.imageUrl AS b_imageUrl,
+	  	b.originalBlogCount as b_originalBlogCount,
+        b.transferBlogCount as b_transferBlogCount,
+        b.visitCount as b_visitCount,
+        b.commentCount as b_commentCount,
+	   	b.createBy AS b_createBy,
+	   	b.createTime AS b_createTime,
+	  	b.updateBy AS b_updateBy,
+	   	b.updateTime AS b_updateTime,
+	   	b.delFlag AS b_delFlag
+      FROM
+	    blog_comment bc,
+	    blogger b
+      WHERE
+	    bc.bloggerId = b.id
+	    and bc.delFlag = 0
+        AND bc.blogId = #{blogId}
+      order by bc.createTime desc
+
+    </select>
+    <insert id="createComment" parameterType="com.sandman.blog.entity.user.Comment">
+        insert into blog_comment values(null,#{bloggerId},#{content},#{parentId},#{parentName},#{replayed},#{blogId},#{status},#{createBy},#{createTime},#{updateBy},#{updateTime},#{delFlag})
+    </insert>
 </mapper>

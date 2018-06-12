@@ -35,6 +35,7 @@ sftpServer:
   sshPort: 22
   prefix: /var/www/html
   tempFilePath: C:\\Test #/home/sandman #MultiPartFile转File时，临时文件存放路径
+  bloggerDefaultImg: http://39.104.80.30/spkIMG/sandman/blog/content/7/20180530152641ED5D0ECCB7034FC5ACBC753BD9ECCA33.jpg
 
 elasticsearch:
   clusterName: sunpk-es

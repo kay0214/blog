@@ -14,6 +14,7 @@ public class SftpParam {
     private static int SSH_PORT;
     private static String PATH_PREFIX;
     private static String TEMP_FILE_PATH;
+    private static String BLOGGER_DEFAULT_IMG;
 
     @Value("${sftpServer.userName}")
     private void setUSERNAME(String USERNAME) {
@@ -44,6 +45,10 @@ public class SftpParam {
     public void setTempFilePath(String tempFilePath) {
         TEMP_FILE_PATH = tempFilePath;
     }
+    @Value("${sftpServer.bloggerDefaultImg}")
+    public void setBloggerDefaultImg(String bloggerDefaultImg) {
+        BLOGGER_DEFAULT_IMG = bloggerDefaultImg;
+    }
 
     public static String getUSERNAME() {
         return USERNAME;
@@ -70,5 +75,9 @@ public class SftpParam {
     }
     public static String getLinePathPrefix(){
         return "http://" + getHOST();
+    }
+
+    public static String getBloggerDefaultImg() {
+        return BLOGGER_DEFAULT_IMG;
     }
 }
