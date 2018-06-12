@@ -75,7 +75,7 @@ public class BlogController {
     }
     @ApiOperation(value = "保存博客")
     @PostMapping("/blog/saveBlog")
-    public BaseDto saveBlog(Blog blog){
+    public BaseDto saveBlog(@RequestBody Blog blog){
         Long bloggerId = ShiroSecurityUtils.getCurrentUserId();
         log.info("保存博客的博主id:::::::::::::::{}",bloggerId);
         blog.setBloggerId(bloggerId);
