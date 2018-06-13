@@ -7,6 +7,7 @@ import com.sandman.blog.entity.common.ResponseStatus;
 import com.sandman.blog.entity.user.Blog;
 import com.sandman.blog.entity.user.Category;
 import com.sandman.blog.utils.PageBean;
+import com.sandman.blog.utils.ShiroSecurityUtils;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,11 +67,18 @@ public class CategoryService {
     }
     public BaseDto createCategory(String categoryName){
         log.info("categoryName============={}",categoryName);
+        Long bloggerId = ShiroSecurityUtils.getCurrentUserId();
+        if(bloggerId == null){
+            return new BaseDto(ResponseStatus.USER_NOT_LOGIN);
+        }
         Category category = new Category();
-        category.setBloggerId(7L);
+        category.setBloggerId(bloggerId);
         category.setCategoryName(categoryName);
         category.setBlogCount(0);
-        category.setOrderNo(3);
+        Integer maxOrderNo = categoryDao.findMaxOrder(bloggerId);
+        log.info("maxOrderNo====={}",maxOrderNo);
+        maxOrderNo = (maxOrderNo == null)?1:(maxOrderNo + 1);
+        category.setOrderNo(maxOrderNo);
         category.setCreateTime(ZonedDateTime.now());
         category.setUpdateTime(ZonedDateTime.now());
         category.setDelFlag(0);

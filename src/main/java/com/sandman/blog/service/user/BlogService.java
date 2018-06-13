@@ -43,8 +43,6 @@ public class BlogService {
     public BaseDto getBlogById(Long id){
         Long bloggerId = ShiroSecurityUtils.getCurrentUserId();
         Blog blog = blogDao.getBlogById(id);
-        //List<Comment> commentList = commentService.getCommentByBlogId(blog.getId());
-        //blog.setCommentList(commentList);
         if(bloggerId != null && !bloggerId.equals(blog.getBloggerId())){//登录用户且不是自己点击的，才算阅读量+1
             blog.setClickCount(blog.getClickCount() + 1);//阅读数+1
             blogDao.updateBlog(blog);
@@ -53,28 +51,19 @@ public class BlogService {
     }
     public BaseDto getAllBlog(Integer pageNumber, Integer size,String sortType,String order){
         String keyWord = "";
-        log.info("pageNumber:{},,,,,size:{}",pageNumber,size);
         log.info("pageNumber======={},size========{},keyword========{}",pageNumber,size,keyWord);
-
         pageNumber = (pageNumber==null || pageNumber<1)?1:pageNumber;
         size = (size==null || size<0)?10:size;
         sortType = (sortType==null || "".equals(sortType))?"desc":sortType;
         order = (order==null || "".equals(order))?"createTime":order;
         String orderBy = order + " " + sortType;//默认按照id降序排序
-
         Integer totalRow = blogDao.getAllBlog(keyWord).size();//查询出数据条数
-        log.info("totalRow:::::{}",totalRow);
         PageHelper.startPage(pageNumber,size).setOrderBy(orderBy);
-
         List<Blog> blogList = blogDao.getAllBlog(keyWord);//查询出列表（已经分页）
-
         PageBean<Blog> pageBean = new PageBean<>(pageNumber,size,totalRow);//这里是为了计算页数，页码
-
         pageBean.setItems(blogList);
         List<Blog> result = pageBean.getItems();
-
         Map data = new HashMap();//最终返回的map
-
         data.put("totalRow",totalRow);
         data.put("totalPage",pageBean.getTotalPage());
         data.put("currentPage",pageBean.getCurrentPage());//默认0就是第一页
@@ -83,7 +72,6 @@ public class BlogService {
     }
     public BaseDto findByKeyWord(Integer pageNumber, Integer size,String sortType,String order,String keyWord){
         log.info("pageNumber======={},size========{},keyword========{}",pageNumber,size,keyWord);
-
         pageNumber = (pageNumber==null || pageNumber<1)?1:pageNumber;
         size = (size==null || size<0)?10:size;
         sortType = (sortType==null || "".equals(sortType))?"desc":sortType;
@@ -91,7 +79,6 @@ public class BlogService {
         String orderBy = order + " " + sortType;//默认按照id降序排序
 
         Integer totalRow = blogDao.getAllBlog(keyWord).size();//查询出数据条数
-        log.info("totalRow:::::{}",totalRow);
         PageHelper.startPage(pageNumber,size).setOrderBy(orderBy);
         List<Blog> blogList = blogDao.getAllBlog(keyWord);//查询出列表（已经分页）
         PageBean<Blog> pageBean = new PageBean<>(pageNumber,size,totalRow);//这里是为了计算页数，页码
@@ -101,7 +88,6 @@ public class BlogService {
         if(result.size()==0){
             keyWord = null;
             totalRow = blogDao.getAllBlog(keyWord).size();//查询出数据条数
-            log.info("totalRow:::::{}",totalRow);
             PageHelper.startPage(pageNumber,size).setOrderBy(orderBy);
             blogList = blogDao.getAllBlog(keyWord);//查询出列表（已经分页）
             pageBean = new PageBean<>(pageNumber,size,totalRow);//这里是为了计算页数，页码
@@ -116,9 +102,10 @@ public class BlogService {
         data.put("blogList",result);
         return new BaseDto(ResponseStatus.SUCCESS,data);
     }
-    public BaseDto findByBloggerId(Integer pageNumber, Integer size,String sortType,String order,Long bloggerId,boolean publicBlogs){
-        log.info("是否是所有用户可见的文章:{}",publicBlogs);
-        log.info("pageNumber======={},size========{},sortType======{},order======={},bloggerId========{}",pageNumber,size,sortType,order,bloggerId);
+    /**
+     * 根据bloggerId查询博客。0：全部博客；1：仅发表博客；2：私密博客；3：博客草稿
+     * */
+    public BaseDto findByBloggerId(Integer pageNumber, Integer size,String sortType,String order,Long bloggerId,Integer publicBlogs){
         pageNumber = (pageNumber==null || pageNumber<1)?1:pageNumber;
         size = (size==null || size<0)?10:size;
         sortType = (sortType==null || "".equals(sortType))?"desc":sortType;
@@ -128,30 +115,36 @@ public class BlogService {
         Integer totalRow = 0;
         PageBean<Blog> pageBean = null;
         List<Blog> result = new ArrayList<>();
-        if(publicBlogs){
+        if(publicBlogs == 0){//查询所有博客
             totalRow = blogDao.findByBloggerId(bloggerId).size();//查询出数据条数
-            log.info("totalRow:::::{}",totalRow);
             PageHelper.startPage(pageNumber,size).setOrderBy(orderBy);
-
             List<Blog> blogList = blogDao.findByBloggerId(bloggerId);//查询出列表（已经分页）
-
             pageBean = new PageBean<>(pageNumber,size,totalRow);//这里是为了计算页数，页码
-
             pageBean.setItems(blogList);
             result = pageBean.getItems();
-
-        }else{
-            totalRow = blogDao.findAllByBloggerId(bloggerId).size();//查询出数据条数
-            log.info("totalRow:::::{}",totalRow);
+        }else if(publicBlogs == 1){//仅发表的博客
+            totalRow = blogDao.findPublicByBloggerId(bloggerId).size();//查询出数据条数
             PageHelper.startPage(pageNumber,size).setOrderBy(orderBy);
-
-            List<Blog> blogList = blogDao.findAllByBloggerId(bloggerId);//查询出列表（已经分页）
-
+            List<Blog> blogList = blogDao.findPublicByBloggerId(bloggerId);//查询出列表（已经分页）
             pageBean = new PageBean<>(pageNumber,size,totalRow);//这里是为了计算页数，页码
-
             pageBean.setItems(blogList);
             result = pageBean.getItems();
-
+        }else if(publicBlogs == 2){//私密博客
+            totalRow = blogDao.findOnlyMeReadByBloggerId(bloggerId).size();//查询出数据条数
+            PageHelper.startPage(pageNumber,size).setOrderBy(orderBy);
+            List<Blog> blogList = blogDao.findOnlyMeReadByBloggerId(bloggerId);//查询出列表（已经分页）
+            pageBean = new PageBean<>(pageNumber,size,totalRow);//这里是为了计算页数，页码
+            pageBean.setItems(blogList);
+            result = pageBean.getItems();
+        }else if(publicBlogs == 3){//博客草稿
+            totalRow = blogDao.findDraftByBloggerId(bloggerId).size();//查询出数据条数
+            PageHelper.startPage(pageNumber,size).setOrderBy(orderBy);
+            List<Blog> blogList = blogDao.findDraftByBloggerId(bloggerId);//查询出列表（已经分页）
+            pageBean = new PageBean<>(pageNumber,size,totalRow);//这里是为了计算页数，页码
+            pageBean.setItems(blogList);
+            result = pageBean.getItems();
+        }else{//请求错误
+            return new BaseDto(ResponseStatus.SUCCESS);
         }
 
         Map data = new HashMap();//最终返回的map
@@ -245,12 +238,10 @@ public class BlogService {
     public List uploadContentImg(MultipartFile[] files){
         List<String> imgUrl = new ArrayList<>();
         for(MultipartFile file:files){
-            log.info("fileName={}",file.getOriginalFilename());
             String fileName = RandomUtils.getRandomFileName() + "." + FileUtils.getSuffixNameByFileName(file.getOriginalFilename());
             String path = "/spkIMG/sandman/blog/content/" + 7 + "/";//这里的7 到时候换成userId
             String filePath = SftpParam.getPathPrefix() + path;//服务器图片路径
             String linePath = SftpParam.getLinePathPrefix() + path + fileName;//网络图片路径
-            log.info("filePath=[{}],linePath=[{}]",filePath,linePath);
             File tempFile = FileUtils.getFileByMultipartFile(file);
             boolean uploadSuccess = FileUtils.upload(filePath,fileName,tempFile);//FileUtils.upload(filePath,fileName,tempFile);//上传服务器
             if(uploadSuccess){

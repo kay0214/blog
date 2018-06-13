@@ -90,13 +90,25 @@
 
     </select>
     <select id="findByBloggerId" parameterType="Long" resultMap="blogResultMap">
+        select <include refid="blog"/> from blog t,blogger r where t.delFlag=0 and t.bloggerId = r.id
+        <if test="bloggerId != null">
+            and t.bloggerId = #{bloggerId}
+        </if>
+    </select>
+    <select id="findPublicByBloggerId" parameterType="Long" resultMap="blogResultMap">
         select <include refid="blog"/> from blog t,blogger r where t.delFlag=0 and t.bloggerId = r.id and t.isDraft = 0 and t.onlyMeRead = 0
         <if test="bloggerId != null">
             and t.bloggerId = #{bloggerId}
         </if>
     </select>
-    <select id="findAllByBloggerId" parameterType="Long" resultMap="blogResultMap">
-        select <include refid="blog"/> from blog t,blogger r where t.delFlag=0 and t.bloggerId = r.id
+    <select id="findOnlyMeReadByBloggerId" parameterType="Long" resultMap="blogResultMap">
+        select <include refid="blog"/> from blog t,blogger r where t.delFlag=0 and t.bloggerId = r.id and t.onlyMeRead = 1
+        <if test="bloggerId != null">
+            and t.bloggerId = #{bloggerId}
+        </if>
+    </select>
+    <select id="findDraftByBloggerId" parameterType="Long" resultMap="blogResultMap">
+        select <include refid="blog"/> from blog t,blogger r where t.delFlag=0 and t.bloggerId = r.id and t.isDraft = 1
         <if test="bloggerId != null">
             and t.bloggerId = #{bloggerId}
         </if>

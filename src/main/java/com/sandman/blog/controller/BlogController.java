@@ -43,17 +43,20 @@ public class BlogController {
     public BaseDto findByKeyWord(Integer pageNumber, Integer size,String sortType,String order,String keyWord){
         return blogService.findByKeyWord(pageNumber, size,sortType,order, keyWord);
     }
+    /**
+     * 根据bloggerId查询博客。0：全部博客；1：仅发表博客；2：私密博客；3：博客草稿
+     * */
     @ApiOperation(value = "查询某位博主的所有博客")
     @GetMapping("/blog/findAllByBloggerId")
-    public BaseDto findAllByBloggerId(Integer pageNumber, Integer size,String sortType,String order,Long bloggerId){
+    public BaseDto findAllByBloggerId(Integer pageNumber, Integer size,String sortType,String order,Long bloggerId,Integer blogType){
         bloggerId = (bloggerId == null)?ShiroSecurityUtils.getCurrentUserId():bloggerId;
-        return blogService.findByBloggerId(pageNumber, size, sortType, order, bloggerId,false);//非公开博客也一起查询
+        return blogService.findByBloggerId(pageNumber, size, sortType, order, bloggerId,blogType);//非公开博客也一起查询
     }
     @ApiOperation(value = "查询某位博主的所有公开博客")
     @GetMapping("/blog/findByBloggerId")
     public BaseDto findByBloggerId(Integer pageNumber, Integer size,String sortType,String order,Long bloggerId){
         bloggerId = (bloggerId == null)?ShiroSecurityUtils.getCurrentUserId():bloggerId;
-        return blogService.findByBloggerId(pageNumber, size, sortType, order, bloggerId,true);
+        return blogService.findByBloggerId(pageNumber, size, sortType, order, bloggerId,1);
     }
     @ApiOperation(value = "根据id删除博客（假删）")
     @GetMapping("/blog/deleteBlog")
@@ -77,7 +80,6 @@ public class BlogController {
     @PostMapping("/blog/saveBlog")
     public BaseDto saveBlog(@RequestBody Blog blog){
         Long bloggerId = ShiroSecurityUtils.getCurrentUserId();
-        log.info("保存博客的博主id:::::::::::::::{}",bloggerId);
         blog.setBloggerId(bloggerId);
         log.debug(blog.toString());
         if(bloggerId!=null){
@@ -88,7 +90,6 @@ public class BlogController {
     @ApiOperation(value = "上传图片到服务器")
     @PostMapping("/blog/uploadContentImg")
     public String uploadContentImg(MultipartFile[] files){
-        log.info("enter upload");
         List<String> list = blogService.uploadContentImg(files);
         Map map = new HashMap();
         if(list.size()>0){

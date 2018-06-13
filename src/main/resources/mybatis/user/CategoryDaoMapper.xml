@@ -13,4 +13,7 @@
     <update id="updateCategory" parameterType="com.sandman.blog.entity.user.Category">
         update category set categoryName = #{categoryName},blogCount = #{blogCount},orderNo = #{orderNo},updateTime = #{updateTime},delFlag = #{delFlag} where id = #{id}
     </update>
+    <select id="findMaxOrder" parameterType="Long" resultType="java.lang.Integer">
+        SELECT MAX(orderNo) as maxOrderNo from category where delFlag=0 and bloggerId = #{bloggerId}
+    </select>
 </mapper>

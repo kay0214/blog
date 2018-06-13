@@ -29,7 +29,6 @@ public class CommentService {
     private BloggerService bloggerService;
 
     public BaseDto getMyComment(Integer pageNumber, Integer size,Long bloggerId) {
-        log.info("pageNumber======={},size========{},bloggerId========{}",pageNumber,size,bloggerId);
         pageNumber = (pageNumber==null || pageNumber<1)?1:pageNumber;
         size = (size==null || size<0)?10:size;
         String orderBy = "createTime desc";//默认按照createTime降序排序

@@ -15,7 +15,9 @@ public interface BlogDao {
     public Blog getBlogById(Long id);
     public List<Blog> getAllBlog(@Param("keyWord")String keyWord);
     public List<Blog> findByBloggerId(@Param("bloggerId") Long bloggerId);
-    public List<Blog> findAllByBloggerId(@Param("bloggerId") Long bloggerId);
+    public List<Blog> findPublicByBloggerId(@Param("bloggerId") Long bloggerId);
+    public List<Blog> findOnlyMeReadByBloggerId(@Param("bloggerId") Long bloggerId);
+    public List<Blog> findDraftByBloggerId(@Param("bloggerId") Long bloggerId);
     public void updateBlog(Blog blog);
     public void createBlog(Blog blog);
 }

@@ -7,6 +7,7 @@ import com.sandman.blog.entity.system.Role;
 import com.sandman.blog.entity.system.User;
 import com.sandman.blog.entity.user.ValidateCode;
 import com.sandman.blog.service.user.BloggerService;
+import com.sandman.blog.service.user.CategoryService;
 import com.sandman.blog.service.user.ValidateCodeService;
 import com.sandman.blog.utils.PasswordEncrypt;
 import com.sandman.blog.utils.RandomUtils;
@@ -40,6 +41,8 @@ public class UserService {
     private PermissionService permissionService;
     @Autowired
     private BloggerService bloggerService;
+    @Autowired
+    private CategoryService categoryService;
     /**
      * 注册用户
      */
@@ -75,6 +78,8 @@ public class UserService {
         userDao.createUser(user);
         user = findUserByUserName(user.getUserName());
         bloggerService.createBlogger(user.getId(),user.getUserName(),user.getNickName());//创建博客账户
+
+        categoryService.createCategory("我的随笔");
 
         deleteValidateCode(user);//注册完成，异步删除验证码
         return new BaseDto(200,"注册成功!",user);
