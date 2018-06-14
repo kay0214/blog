@@ -25,7 +25,6 @@ public class FileUtils {
         fileSizeMap.put(3, "GB");
     }
     public static boolean uploadFile(byte[] file, String filePath, String fileName) {
-        System.out.println();
         File targetFile = new File(filePath);
         if (!targetFile.exists()) {
             targetFile.mkdirs();
