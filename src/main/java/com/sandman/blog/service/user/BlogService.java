@@ -236,10 +236,11 @@ public class BlogService {
         }
     }
     public List uploadContentImg(MultipartFile[] files){
+        Long bloggerId = ShiroSecurityUtils.getCurrentUserId();
         List<String> imgUrl = new ArrayList<>();
         for(MultipartFile file:files){
             String fileName = RandomUtils.getRandomFileName() + "." + FileUtils.getSuffixNameByFileName(file.getOriginalFilename());
-            String path = "/spkIMG/sandman/blog/content/" + 7 + "/";//这里的7 到时候换成userId
+            String path = "/spkIMG/sandman/blog/content/" + bloggerId + "/";//这里的7 到时候换成userId
             String filePath = SftpParam.getPathPrefix() + path;//服务器图片路径
             String linePath = SftpParam.getLinePathPrefix() + path + fileName;//网络图片路径
             File tempFile = FileUtils.getFileByMultipartFile(file);
