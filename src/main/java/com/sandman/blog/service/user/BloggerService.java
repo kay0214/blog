@@ -69,16 +69,31 @@ public class BloggerService {
             return new BaseDto(ResponseStatus.HAVE_NO_DATA);
         }
     }
+    //id为bloggerId的博主的原创博客数量+1
     public void addOriginalBlogCount(Long bloggerId){
         Blogger blogger = bloggerDao.findById(bloggerId);
         blogger.setOriginalBlogCount(blogger.getOriginalBlogCount() + 1);
         bloggerDao.updateBlogger(blogger);
     }
+    //id为bloggerId的博主的原创博客数量-1
+    public void reduceOriginalBlogCount(Long bloggerId){
+        Blogger blogger = bloggerDao.findById(bloggerId);
+        blogger.setOriginalBlogCount(blogger.getOriginalBlogCount() - 1);
+        bloggerDao.updateBlogger(blogger);
+    }
+    //id为bloggerId的博主的转载博客数量+1
     public void addTransferBlogCount(Long bloggerId){
         Blogger blogger = bloggerDao.findById(bloggerId);
         blogger.setTransferBlogCount(blogger.getTransferBlogCount() + 1);
         bloggerDao.updateBlogger(blogger);
     }
+    //id为bloggerId的博主的转载博客数量-1
+    public void reduceTransferBlogCount(Long bloggerId){
+        Blogger blogger = bloggerDao.findById(bloggerId);
+        blogger.setTransferBlogCount(blogger.getTransferBlogCount() - 1);
+        bloggerDao.updateBlogger(blogger);
+    }
+    //id为bloggerId的博主的访问数量+1
     public void addVisitCount(Long bloggerId){
         Long myBloggerId = ShiroSecurityUtils.getCurrentUserId();
         if(myBloggerId!=null){  //登录用户并且登录用户不是博主自己，访问量 + 1
@@ -89,10 +104,17 @@ public class BloggerService {
             }
         }
     }
+    //id为bloggerId的博主的评论数量+1
     public void addCommentCount(Long bloggerId){
         Blogger blogger = bloggerDao.findById(bloggerId);
         blogger.setCommentCount(blogger.getCommentCount() + 1);
         bloggerDao.updateBlogger(blogger);
     }
-
+    //id为bloggerId的博主的评论数量- count个
+    public void reduceCommentCount(Long bloggerId,Integer count){
+        count = (count==null)?0:count;
+        Blogger blogger = bloggerDao.findById(bloggerId);
+        blogger.setCommentCount(blogger.getCommentCount() - count);
+        bloggerDao.updateBlogger(blogger);
+    }
 }

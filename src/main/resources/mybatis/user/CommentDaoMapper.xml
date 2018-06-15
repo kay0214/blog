@@ -214,4 +214,7 @@
     <insert id="createComment" parameterType="com.sandman.blog.entity.user.Comment">
         insert into blog_comment values(null,#{bloggerId},#{content},#{parentId},#{parentName},#{replayed},#{blogId},#{status},#{createBy},#{createTime},#{updateBy},#{updateTime},#{delFlag})
     </insert>
+    <update id="deleteCommentByBlogId" parameterType="Long">
+        update blog_comment set delFlag = #{delFlag} where blogId = #{blogId}
+    </update>
 </mapper>

@@ -39,6 +39,8 @@ public class BlogService {
     private BloggerService bloggerService;
     @Autowired
     private CategoryService categoryService;
+    @Autowired
+    private CommentService commentService;
 
     public BaseDto getBlogById(Long id){
         Long bloggerId = ShiroSecurityUtils.getCurrentUserId();
@@ -158,9 +160,21 @@ public class BlogService {
     public BaseDto deleteBlog(Long id,Long bloggerId){
         log.info("delete blog ======== blogId::::{},bloggerId::::{}",id,bloggerId);
         Blog blog = blogDao.getBlogById(id);
-        if(bloggerId.equals(blog.getBloggerId())){
+        if(blog != null && bloggerId.equals(blog.getBloggerId())){
+            //删除一篇博客
             blog.setDelFlag(1);
             blogDao.updateBlog(blog);
+            //blogger的博客数量 - 1
+            if(blog.getBlogType() == 0){//原创
+                bloggerService.reduceOriginalBlogCount(bloggerId);//原创数量-1
+            }else if(blog.getBlogType() == 1){//转载
+                bloggerService.reduceTransferBlogCount(bloggerId);//转载数量-1
+            }else{
+                return new BaseDto(ResponseStatus.HAVE_NO_DATA);
+            }
+            //删除blogId的评论
+            Integer rowCount = commentService.deleteCommentByBlogId(blog.getId());
+            bloggerService.reduceCommentCount(bloggerId,rowCount);
             return new BaseDto(ResponseStatus.SUCCESS);
         }
         return new BaseDto(ResponseStatus.NOT_HAVE_PERMISSION_TO_DELETE);

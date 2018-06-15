@@ -78,7 +78,12 @@ public class CommentService {
         data.put("commentList",result);
         return new BaseDto(ResponseStatus.SUCCESS,data);
     }
-
+    /**
+     * 删除某一篇博客下面的所有评论
+     * */
+    public Integer deleteCommentByBlogId(Long blogId){
+        return commentDao.deleteCommentByBlogId(blogId);//返回受影响的数量
+    }
     public BaseDto deleteComment(Long id, Long bloggerId) {
         log.info("deleteComment=========id:::{},bloggerId:::{}", id, bloggerId);
         Comment comment = commentDao.findById(id);

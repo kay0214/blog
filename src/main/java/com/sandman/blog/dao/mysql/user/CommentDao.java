@@ -19,4 +19,5 @@ public interface CommentDao {
     public List<Comment> getCommentByBlogId(Long blogId);
     public void createComment(Comment comment);
     public void updateComment(Comment comment);
+    public Integer deleteCommentByBlogId(Long blogId);
 }
