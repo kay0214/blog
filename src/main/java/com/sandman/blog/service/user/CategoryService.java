@@ -91,4 +91,34 @@ public class CategoryService {
         category.setBlogCount(category.getBlogCount() + 1);
         categoryDao.updateCategory(category);
     }
+    public void reduceCountByCategoryId(Long id){
+        Category category = categoryDao.getCategoryById(id);
+        category.setBlogCount(category.getBlogCount() - 1);
+        categoryDao.updateCategory(category);
+    }
+    public BaseDto deleteCategory(Long id,Long bloggerId){
+        Category category = categoryDao.getCategoryById(id);
+        if(category!=null){
+            if(bloggerId.equals(category.getBloggerId())){
+                category.setDelFlag(1);
+                categoryDao.updateCategory(category);
+                return new BaseDto(ResponseStatus.SUCCESS);
+            }
+            return new BaseDto(ResponseStatus.NOT_HAVE_PERMISSION_TO_DELETE);
+
+        }
+        return new BaseDto(ResponseStatus.HAVE_NO_DATA);
+    }
+    public BaseDto updateCategory(Long id,String categoryName,Long bloggerId){
+        Category category = categoryDao.getCategoryById(id);
+        if(category!=null){
+            if(bloggerId.equals(category.getBloggerId())){
+                category.setCategoryName(categoryName);
+                categoryDao.updateCategory(category);
+                return new BaseDto(ResponseStatus.SUCCESS);
+            }
+            return new BaseDto(ResponseStatus.NOT_HAVE_PERMISSION_TO_UPDATE);
+        }
+        return new BaseDto(ResponseStatus.HAVE_NO_DATA);
+    }
 }

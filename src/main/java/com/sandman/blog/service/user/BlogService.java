@@ -175,6 +175,8 @@ public class BlogService {
             //删除blogId的评论
             Integer rowCount = commentService.deleteCommentByBlogId(blog.getId());
             bloggerService.reduceCommentCount(bloggerId,rowCount);
+            //对应的个人分类 - 1
+            categoryService.reduceCountByCategoryId(blog.getCategoryId());
             return new BaseDto(ResponseStatus.SUCCESS);
         }
         return new BaseDto(ResponseStatus.NOT_HAVE_PERMISSION_TO_DELETE);
@@ -254,7 +256,7 @@ public class BlogService {
         List<String> imgUrl = new ArrayList<>();
         for(MultipartFile file:files){
             String fileName = RandomUtils.getRandomFileName() + "." + FileUtils.getSuffixNameByFileName(file.getOriginalFilename());
-            String path = "/spkIMG/sandman/blog/content/" + bloggerId + "/";//这里的7 到时候换成userId
+            String path = "/content/" + bloggerId + "/";//这里的7 到时候换成userId
             String filePath = SftpParam.getPathPrefix() + path;//服务器图片路径
             String linePath = SftpParam.getLinePathPrefix() + path + fileName;//网络图片路径
             File tempFile = FileUtils.getFileByMultipartFile(file);

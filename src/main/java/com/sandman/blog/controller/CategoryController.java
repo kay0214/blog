@@ -52,4 +52,30 @@ public class CategoryController {
         }
         return new BaseDto(ResponseStatus.HAVE_NO_DATA);
     }
+    @ApiOperation(value = "用户删除自定义分类（假删）")
+    @GetMapping("/category/deleteCategory")
+    public BaseDto deleteCategory(Long id){
+        log.info("controller ::::::: id======={}",id);
+        Long bloggerId = ShiroSecurityUtils.getCurrentUserId();
+        if(id!=null){
+            if(bloggerId!=null){
+                return categoryService.deleteCategory(id,bloggerId);
+            }
+            return new BaseDto(ResponseStatus.NOT_HAVE_PERMISSION_TO_DELETE);//无权删除
+        }
+        return new BaseDto(ResponseStatus.HAVE_NO_DATA);
+    }
+    @ApiOperation(value = "用户修改自定义分类名称")
+    @GetMapping("/category/updateCategory")
+    public BaseDto updateCategory(Long id,String categoryName){
+        log.info("controller ::::::: id======={},categoryName======={}",id,categoryName);
+        Long bloggerId = ShiroSecurityUtils.getCurrentUserId();
+        if(id!=null){
+            if(bloggerId!=null){
+                return categoryService.updateCategory(id,categoryName,bloggerId);
+            }
+            return new BaseDto(ResponseStatus.NOT_HAVE_PERMISSION_TO_UPDATE);//无权修改
+        }
+        return new BaseDto(ResponseStatus.HAVE_NO_DATA);
+    }
 }
