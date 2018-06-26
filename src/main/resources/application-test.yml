@@ -33,7 +33,7 @@ sftpServer:
   sshPort: 22
   prefix: /root/sandman/blog #blog项目的基础地址
   tempFilePath: /home/sandman #/home/sandman #MultiPartFile转File时，临时文件存放路径
-  bloggerDefaultImg: http://117.48.197.114/spkIMG/sandman/blog/content/7/avatar.jpg
+  bloggerDefaultImg: http://117.48.197.114/blog/avatar/default/avatar.jpg
   templatesPath: /home/sandman/templates
 elasticsearch:
   clusterName: sunpk-es
