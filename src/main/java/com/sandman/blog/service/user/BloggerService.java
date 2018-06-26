@@ -52,7 +52,7 @@ public class BloggerService {
         Blogger blogger = bloggerDao.findById(bloggerId);
         if(blogger != null){
             String fileName = RandomUtils.getRandomFileName() + "." + FileUtils.getSuffixNameByFileName(file.getOriginalFilename());
-            String path = "/avatar/" + bloggerId + "/";//这里的7 到时候换成userId
+            String path = "/blog/avatar/" + bloggerId + "/";//这里的7 到时候换成userId
             String filePath = SftpParam.getPathPrefix() + path;//服务器图片路径
             String linePath = SftpParam.getLinePathPrefix() + path + fileName;//网络图片路径
             log.info("filePath=[{}],linePath=[{}]",filePath,linePath);

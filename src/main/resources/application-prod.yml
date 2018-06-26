@@ -31,7 +31,7 @@ sftpServer:
   password: ADSFzcxv2825
   host: 117.48.197.114
   sshPort: 22
-  prefix: /root/sandman/blog #blog项目的基础地址
+  prefix: /home/sandman #blog项目的基础地址
   tempFilePath: /home/sandman #/home/sandman #MultiPartFile转File时，临时文件存放路径
   bloggerDefaultImg: http://117.48.197.114/blog/avatar/default/avatar.jpg
   templatesPath: /home/sandman/templates
